@@ -274,6 +274,7 @@ RSpec.describe 'Merchant Dashboard page' do
       end
     end
   end
+  
 
   context 'as an admin' do
   end

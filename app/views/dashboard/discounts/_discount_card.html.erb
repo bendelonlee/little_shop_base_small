@@ -1,0 +1,9 @@
+<div class="card float-left m-3" style="width: 18rem;">
+  <div class="card-body">
+  <% if discount.percent? %>
+    <p> <%= discount.value_off %>% off orders of <%= discount.min_amount %> items or more. </p>
+  <% elsif discount.dollar? %>
+    <p> $<%= discount.value_off %> off orders of $<%= discount.min_amount %> or more. </p>
+  <% end %>
+  </div>
+</div>
