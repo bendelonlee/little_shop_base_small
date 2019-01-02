@@ -5,10 +5,10 @@
   <p><%= link_to user.name, admin_user_path(user) %><br/>
   Registered: <%= user.created_at %>
   <% if user.active? %>
-  <%= button_to 'Disable', admin_user_disable_path(user) %>
+  <%= button_to 'Disable', admin_user_disable_path(user), method: :patch %>
   <% else %>
-  <%= button_to 'Enable', admin_user_enable_path(user) %>
+  <%= button_to 'Enable', admin_user_enable_path(user), method: :patch %>
   <% end %>
-  <%= button_to 'Upgrade to Merchant', admin_user_upgrade_path(user) %>
+  <%= button_to 'Upgrade to Merchant', admin_user_upgrade_path(user), method: :patch %>
   <% end %>
 <% end %>

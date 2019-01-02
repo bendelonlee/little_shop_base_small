@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   get '/dashboard', to: 'merchants#show', as: 'dashboard'
   namespace :dashboard do
     resources :orders, only: [:show] do
-      post '/items/:id/fulfill', to: 'orders#fulfill_item', as: 'item_fulfill'
+      patch '/items/:id/fulfill', to: 'orders#fulfill_item', as: 'item_fulfill'
     end
     resources :items, except: [:show]
     resources :discounts, only: [:index]
@@ -39,15 +39,15 @@ Rails.application.routes.draw do
   patch '/admin/users/:merchant_id/items/:id', to: 'dashboard/items#update', as: 'admin_user_item'
   namespace :admin do
     resources :users, only: [:index, :show, :edit] do
-      post '/enable', to: 'users#enable', as: 'enable'
-      post '/disable', to: 'users#disable', as: 'disable'
-      post '/upgrade', to: 'users#upgrade', as: 'upgrade'
+      patch '/enable', to: 'users#enable', as: 'enable'
+      patch '/disable', to: 'users#disable', as: 'disable'
+      patch '/upgrade', to: 'users#upgrade', as: 'upgrade'
       resources :orders, only: [:index, :show]
     end
     resources :merchants, only: [:show] do
-      post '/enable', to: 'merchants#enable', as: 'enable'
-      post '/disable', to: 'merchants#disable', as: 'disable'
-      post '/upgrade', to: 'merchants#downgrade', as: 'downgrade'
+      patch '/enable', to: 'merchants#enable', as: 'enable'
+      patch '/disable', to: 'merchants#disable', as: 'disable'
+      patch '/upgrade', to: 'merchants#downgrade', as: 'downgrade'
       resources :items, only: [:index, :new, :edit]
     end
     resources :dashboard, only: [:index]

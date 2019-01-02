@@ -16,6 +16,7 @@ RSpec.describe 'User Profile workflow', type: :feature do
           expect(page).to have_content("#{user.city}, #{user.state} #{user.zip}")
         end
         expect(page).to have_link('Edit Profile')
+        expect(page).to have_link('My Orders')
       end
     end
   end

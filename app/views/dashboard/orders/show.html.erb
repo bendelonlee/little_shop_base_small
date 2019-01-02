@@ -21,7 +21,7 @@
         Fulfilled!
       <% else %>
         <% if current_user.inventory_check(item.id) >= @order.item_quantity(item.id) %>
-        <%= button_to 'Fulfill Item', dashboard_order_item_fulfill_path(@order, item) %>
+        <%= button_to 'Fulfill Item', dashboard_order_item_fulfill_path(@order, item), method: :patch %>
         <% else %>
         Cannot fulfill, not enough inventory
         <% end %>

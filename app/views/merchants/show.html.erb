@@ -15,7 +15,7 @@
 <% end %>
 
 <% if current_admin? %>
-<%= button_to "Downgrade to User", admin_merchant_downgrade_path(@merchant) %>
+<%= button_to "Downgrade to User", admin_merchant_downgrade_path(@merchant), method: :patch %>
 <% end %>
 
 <%= tag.div id: 'orders' do %>
