@@ -183,6 +183,12 @@ RSpec.describe 'Merchant Dashboard page' do
 
         allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(merchant)
       end
+      it 'shows pie chart of items sold' do
+        visit dashboard_path
+        page.all('body script', visible: false).each do |el|
+          expect(el.text(:all)).to include("data.addRows([ ['Sold', 15], ['Unsold', 80] ]")
+        end
+      end
       it 'shows top 5 items sold by quantity' do
         visit dashboard_path
         within '#statistics' do
@@ -274,7 +280,7 @@ RSpec.describe 'Merchant Dashboard page' do
       end
     end
   end
-  
+
 
   context 'as an admin' do
   end
