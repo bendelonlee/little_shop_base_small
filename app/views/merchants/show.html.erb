@@ -27,7 +27,7 @@
     <ul>
       <% @orders.each do |order| %>
         <%= tag.li id: "order-#{order.id}" do %>
-          <%= render partial: "order_card", locals: {order: order} %>
+          <%= render partial: "merchants/order_card", locals: {order: order} %>
         <% end %>
       <% end %>
     </ul>
