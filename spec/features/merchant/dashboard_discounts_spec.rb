@@ -75,11 +75,29 @@ RSpec.describe 'Merchant discount Page' do
       click_on "Update Discount"
 
       expect(current_path).to eq(dashboard_discounts_path)
+      expect(page).to have_content("Discount ##{@discount.id} has been updated.")
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
       visit(dashboard_discounts_path)
       within "#discount-#{Discount.last.id}" do
         expect(page).to have_content("$#{@new_value_off} off orders of $#{@new_min_amount} or more.")
       end
+    end
+  end
+  describe 'I can delete a discount' do
+    scenario 'when it has never been ordered' do
+      @merchant = create(:merchant)
+      @discount = create(:discount, user: @merchant, discount_type: "percent")
+      @discount_2 = create(:discount, user: @merchant, discount_type: "percent")
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
+      visit dashboard_discounts_path
+      within "#discount-#{@discount.id}" do
+        click_on "Delete"
+      end
+      expect(page).to have_content("Discount ##{@discount.id} has been deleted.")
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
+      visit(dashboard_discounts_path)
+      expect(page).to have_content("#{@discount_2.value_off}% off orders of #{@discount_2.min_amount} items or more.")
+      expect(page).to_not have_content("#{@discount.value_off}% off orders of #{@discount.min_amount} items or more.")
     end
   end
 end
