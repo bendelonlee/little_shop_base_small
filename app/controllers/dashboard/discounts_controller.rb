@@ -6,7 +6,8 @@ class Dashboard::DiscountsController < ApplicationController
   end
 
   def create
-    @discount = Discount.create!(discount_params)
+    @discount = Discount.create(discount_params)
+    flash[:success] = "Discount ##{@discount.id} has been created."
     redirect_to dashboard_discounts_path
   end
 
@@ -21,7 +22,8 @@ class Dashboard::DiscountsController < ApplicationController
 
   def update
     discount = Discount.find(params[:id])
-    discount = Discount.update(discount_params)
+    discount.update(discount_params)
+    flash[:success] = "Discount ##{discount.id} has been updated."
     redirect_to dashboard_discounts_path
   end
 

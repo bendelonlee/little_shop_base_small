@@ -44,6 +44,7 @@ RSpec.describe 'Merchant discount Page' do
     after(:each) do
       click_on "Create Discount"
       expect(current_path).to eq(dashboard_discounts_path)
+      expect(page).to have_content("Discount ##{Discount.last.id} has been created.")
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
       visit(dashboard_discounts_path)
       within "#discount-#{Discount.last.id}" do
