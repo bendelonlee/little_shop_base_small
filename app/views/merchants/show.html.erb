@@ -47,6 +47,8 @@
   <%= tag.div id: 'quantity-sold' do %>
     <h4>Items Shipped as Percentage of Inventory</h4>
     <p>You have sold <%= @qsp[:sold] %> items out of <%= @qsp[:total] %> (<%= @qsp[:percentage] %>%)</p>
+    <%= render partial: "/merchants/dashboard_pie", locals: { sold: @qsp[:sold], total: @qsp[:total] }%>
+
   <% end %>
 
   <%= tag.div id: 'top-3-states' do %>
