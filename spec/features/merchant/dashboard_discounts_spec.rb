@@ -21,45 +21,65 @@ RSpec.describe 'Merchant discount Page' do
       expect(page).to_not have_content("$#{@discount_3.value_off} off orders of $#{@discount_3.min_amount} or more.")
     end
   end
-  it 'I can add add a percent discount' do
-    merchant = create(:merchant)
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(merchant)
-
-    visit dashboard_discounts_path
-    click_link "Add A Discount"
-    expect(current_path).to eq(new_dashboard_discount_path)
-
-    value_off = "10"
-    min_amount = "10"
-
-    fill_in :discount_value_off, with: value_off
-    fill_in :discount_min_amount, with: min_amount
-    find('input[value="percent"]', visible: false).click
-    click_on "Create Discount"
-    expect(current_path).to eq(dashboard_discounts_path)
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(merchant.reload)
-    visit(dashboard_discounts_path)
-    within "#discount-#{Discount.last.id}" do
-      expect(page).to have_content("#{value_off}% off orders of #{min_amount} items or more.")
+  describe 'I can add add a discount' do
+    before(:each) do
+      @merchant = create(:merchant)
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
+      @value_off = "10"
+      @min_amount = "10"
+      visit dashboard_discounts_path
+      click_link "Add A Discount"
+      expect(current_path).to eq(new_dashboard_discount_path)
+      fill_in :discount_value_off, with: @value_off
+      fill_in :discount_min_amount, with: @min_amount
     end
-
-    click_link "Add A Discount"
-
-    fill_in :discount_value_off, with: value_off
-    fill_in :discount_min_amount, with: min_amount
-    find('input[value="dollar"]', visible: false).click
-
-    click_on "Create Discount"
-
-    expect(current_path).to eq(dashboard_discounts_path)
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(merchant.reload)
-    visit(dashboard_discounts_path)
-
-    within "#discount-#{Discount.last.id}" do
-      expect(page).to have_content("$#{value_off} off orders of $#{min_amount} or more.")
+    it "with percent discount type" do
+      find('input[value="percent"]', visible: false).click
+      @expected = "#{@value_off}% off orders of #{@min_amount} items or more."
+    end
+    it "with dollar discount type" do
+      find('input[value="dollar"]', visible: false).click
+      @expected = "$#{@value_off} off orders of $#{@min_amount} or more."
+    end
+    after(:each) do
+      click_on "Create Discount"
+      expect(current_path).to eq(dashboard_discounts_path)
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
+      visit(dashboard_discounts_path)
+      within "#discount-#{Discount.last.id}" do
+        expect(page).to have_content(@expected)
+      end
     end
   end
-  it '' do
+  describe 'Adding a discount with bad information gives errors' do
 
+  end
+  describe 'I can edit a discount' do
+    it 'with good info' do
+      @merchant = create(:merchant)
+      @discount = create(:discount, user: @merchant, discount_type: "percent")
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
+      @new_value_off = "101"
+      @new_min_amount = "101"
+      @new_discount_type = "dollar"
+      visit dashboard_discounts_path
+      within "#discount-#{@discount.id}" do
+        click_on "Edit"
+      end
+
+      expect(current_path).to eq(edit_dashboard_discount_path(@discount))
+      fill_in :discount_value_off, with: @new_value_off
+      fill_in :discount_min_amount, with: @new_min_amount
+      find("input[value=\"#{@new_discount_type}\"]", visible: false).click
+
+      click_on "Update Discount"
+
+      expect(current_path).to eq(dashboard_discounts_path)
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
+      visit(dashboard_discounts_path)
+      within "#discount-#{Discount.last.id}" do
+        expect(page).to have_content("$#{@new_value_off} off orders of $#{@new_min_amount} or more.")
+      end
+    end
   end
 end

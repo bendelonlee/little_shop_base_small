@@ -1,0 +1,12 @@
+<%= form_for @form_path do |f| %>
+  <%= f.label :value_off %>
+  <%= f.number_field :value_off %></br>
+  <%= f.label :min_amount %>
+  <%= f.number_field :min_amount %></br>
+  <%= f.label :discount_type %></br>
+  <%= radio_button('discount', 'discount_type', 'dollar' ) %>
+  <span>dollar</span></br>
+  <%= radio_button('discount', 'discount_type', 'percent' ) %>
+  <span>percent</span></br>
+  <%= f.submit %>
+<% end %>

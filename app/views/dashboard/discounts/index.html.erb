@@ -1,4 +1,6 @@
 <h2>Discounts</h2>
+
+<%= link_to "Add A Discount", new_dashboard_discount_path %>
 <% @discounts.each do |discount| %>
   <%= tag.div id: "discount-#{discount.id}" do %>
     <%= render partial: "dashboard/discounts/discount_card", locals: { discount: discount } %>
