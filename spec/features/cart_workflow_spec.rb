@@ -209,7 +209,7 @@ RSpec.describe 'Cart workflow', type: :feature do
           end
         end
         within "#item-#{@item.id}" do
-          expect(page).to have_content("Bulk Discount! Orders of 10 items or more recieve 10% off")
+          expect(page).to have_content("Orders of 10 items or more recieve 10% off")
           expect(page).to have_content("Discounted: - $3.00")
         end
         expect(page).to have_content("Total: $#{expected_total}")
