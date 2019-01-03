@@ -43,8 +43,7 @@ class Order < ApplicationRecord
   end
 
   def total_cost
-    oi = order_items.pluck("sum(quantity*price)")
-    oi.sum
+    order_items.sum { |oi| oi.subtotal }
   end
 
   def my_item_count(merchant_id)

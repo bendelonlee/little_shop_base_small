@@ -35,7 +35,9 @@ class Cart
 
   def subtotal(item_id)
     item = Item.find(item_id)
-    item.price * count_of(item_id)
+    order_item = OrderItem.new(item: item, price: item.price, quantity: count_of(item_id))
+    order_item.set_amount_discounted
+    order_item.subtotal
   end
 
   def grand_total

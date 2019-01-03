@@ -173,21 +173,56 @@ RSpec.describe 'Cart workflow', type: :feature do
       visit cart_path
       expect(page).to have_content('You must register or log in to check out')
     end
-    scenario 'as a registered user' do
-      user = create(:user)
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
+    describe 'as a registered user' do
+      scenario 'base case' do
+        @user = create(:user)
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@user)
 
-      visit item_path(@item)
-      click_button "Add to Cart"
-      visit cart_path
+        visit item_path(@item)
+        click_button "Add to Cart"
+        visit cart_path
 
-      click_button 'Check out'
+        click_button 'Check out'
 
-      expect(current_path).to eq(profile_path)
-      expect(page).to have_content('You have successfully checked out!')
+        expect(current_path).to eq(profile_path)
+        expect(page).to have_content('You have successfully checked out!')
 
-      visit profile_orders_path
-      expect(page).to have_content("Order ID #{Order.last.id}")
+        visit profile_orders_path
+        expect(page).to have_content("Order ID #{Order.last.id}")
+
+      end
+      scenario 'when discounts apply' do
+        @item.update(inventory: 200)
+        discount = create(:discount, user: @merchant, min_amount: 10, discount_type: 'percent', value_off: 10)
+        @user = create(:user)
+        not_expected_total = "30.00"
+        expected_total = "27.00"
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@user)
+
+        visit item_path(@item)
+        click_button "Add to Cart"
+        visit cart_path
+        9.times do
+          within "#item-#{@item.id}" do
+            click_button 'Add more to cart'
+          end
+        end
+        within "#item-#{@item.id}" do
+          expect(page).to have_content("Subtotal: $#{expected_total}")
+        end
+
+        click_button 'Check out'
+
+        expect(current_path).to eq(profile_path)
+        expect(page).to have_content('You have successfully checked out!')
+
+        visit profile_orders_path
+        expect(page).to have_content("Order ID #{Order.last.id}")
+        visit profile_order_path(Order.last)
+
+        expect(page).to_not have_content("Total Cost: #{number_to_currency(not_expected_total)}")
+        expect(page).to have_content("Total Cost: #{number_to_currency(expected_total)}")
+      end
     end
   end
 
