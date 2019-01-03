@@ -200,6 +200,7 @@ RSpec.describe 'Cart workflow', type: :feature do
         allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@user)
 
         visit item_path(@item)
+
         click_button "Add to Cart"
         visit cart_path
         9.times do
@@ -207,6 +208,11 @@ RSpec.describe 'Cart workflow', type: :feature do
             click_button 'Add more to cart'
           end
         end
+        within "#item-#{@item.id}" do
+          expect(page).to have_content("Bulk Discount! Orders of 10 items or more recieve 10% off")
+          expect(page).to have_content("Discounted: - $3.00")
+        end
+        expect(page).to have_content("Total: $#{expected_total}")
         within "#item-#{@item.id}" do
           expect(page).to have_content("Subtotal: $#{expected_total}")
         end

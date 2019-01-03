@@ -35,7 +35,7 @@ class Cart
 
   def subtotal(item_id)
     item = Item.find(item_id)
-    order_item = OrderItem.new(item: item, price: item.price, quantity: count_of(item_id))
+    order_item = OrderItem.new(item: item, price: item.price, quantity: count_of(item.id))
     order_item.set_amount_discounted
     order_item.subtotal
   end
@@ -44,5 +44,16 @@ class Cart
     @contents.keys.map do |item_id|
       subtotal(item_id)
     end.sum
+  end
+
+  def applicable_discount(item)
+    order_item = OrderItem.new(item: item, price: item.price, quantity: count_of(item.id))
+    order_item.applicable_discount
+  end
+
+  def amount_discounted(item)
+    order_item = OrderItem.new(item: item, price: item.price, quantity: count_of(item.id))
+    order_item.set_amount_discounted
+    order_item.amount_discounted
   end
 end

@@ -28,4 +28,13 @@ module ApplicationHelper
     end
   end
 
+  def describe_discount(discount)
+    case discount.discount_type
+    when "percent"
+      "Bulk Discount! Orders of #{discount.min_amount} items or more recieve #{discount.value_off}% off!"
+    when "dollar"
+      "Bulk Discount! Orders of $#{discount.min_amount} or more recieve $#{discount.value_off} off!"
+    end
+  end
+
 end
