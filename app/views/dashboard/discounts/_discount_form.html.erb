@@ -1,12 +1,20 @@
 <%= form_for @form_path do |f| %>
+  <%= render partial: "errors/error_explanation", locals: {unsaved_resource: @discount} %>
   <%= f.label :value_off %>
   <%= f.number_field :value_off %></br>
   <%= f.label :min_amount %>
   <%= f.number_field :min_amount %></br>
   <%= f.label :discount_type %></br>
-  <%= radio_button('discount', 'discount_type', 'dollar' ) %>
-  <span>dollar</span></br>
-  <%= radio_button('discount', 'discount_type', 'percent' ) %>
-  <span>percent</span></br>
+  <% unless @discount_type %>
+    <div id = "discount-type-radio">
+      <%= radio_button('discount', 'discount_type', 'dollar' ) %>
+      <span>dollar</span></br>
+      <%= radio_button('discount', 'discount_type', 'percent' ) %>
+      <span>percent</span></br>
+      <p>Info: A merchant may only have one type (dollar or percent) of discount active at any one time. </p>
+    </div>
+  <% else %>
+    <p>Your discount type is: <%= @discount_type %>. (To change your discount type, delete or disable all active discounts)</p>
+  <% end %>
   <%= f.submit %>
 <% end %>
