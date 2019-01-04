@@ -1,0 +1,14 @@
+<% if unsaved_resource.errors.any? %>
+  <div id="error_explanation">
+    <h2>
+      <%= pluralize(unsaved_resource.errors.count, "error") %> prohibited this
+      <%= unsaved_resource.class.to_s.downcase %> from being saved:
+    </h2>
+
+    <ul>
+      <% unsaved_resource.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

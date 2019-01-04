@@ -52,6 +52,23 @@ RSpec.describe 'Merchant discount Page' do
       end
     end
   end
+  describe "adding a discount with bad data gives errors" do
+    before(:each) do
+      @merchant = create(:merchant)
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
+      visit dashboard_discounts_path
+      click_link "Add A Discount"
+      expect(current_path).to eq(new_dashboard_discount_path)
+    end
+    scenario "negative numbers and no type" do
+      fill_in :discount_value_off, with: "-1"
+      fill_in :discount_min_amount, with: "-1"
+      click_on "Create Discount"
+      expect(page).to have_content("Error of some kind")
+      expect(Discount.count).to eq(0)
+    end
+
+  end
   describe 'Adding a discount with bad information gives errors' do
 
   end
