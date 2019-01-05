@@ -185,7 +185,9 @@ RSpec.describe User, type: :model do
         @order_8 = create(:order, user: @user_1)
         @oi_8 = create(:order_item, order: @order_8, item: @item_6, quantity: 20, price: 1000, updated_at: 2.months.ago)
 
-        expect(User.merchants_by_revenue).to eq([@merchant_2, @merchant])
+        actual = User.merchants_by_revenue
+        expect(actual).to eq([@merchant_2, @merchant])
+        expect(actual.first.revenue).to eq(20_000)
       end
     end
   end

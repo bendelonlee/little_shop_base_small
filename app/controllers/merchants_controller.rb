@@ -8,6 +8,7 @@ class MerchantsController < ApplicationController
     end
     @merchants = User.where(flags)
 
+    @merchants_by_revenue = User.merchants_by_revenue
     @top_3_revenue_merchants = User.top_3_revenue_merchants
     @top_3_fulfilling_merchants = User.top_3_fulfilling_merchants
     @bottom_3_fulfilling_merchants = User.bottom_3_fulfilling_merchants
@@ -27,6 +28,7 @@ class MerchantsController < ApplicationController
     @most_items_user = @merchant.most_items_user
     @most_items_user = @merchant.most_items_user
     @top_3_revenue_users = @merchant.top_3_revenue_users
+    @past_3_months_sales = @merchant.past_3_months_sales
   end
 
   private

@@ -51,6 +51,14 @@ NYC, Seattle WA, Seattle FL
 - top 3 biggest orders by quantity of items
 2, 3, 4
 =end
+      it 'shows a chart of all merchants by revenue' do
+        visit merchants_path
+        within '#statistics' do
+          within '#merchants-by-revenue' do
+            expect(page).to have_css("#merchants-by-revenue-pie-chart")
+          end
+        end
+      end
       it 'shows top 3 merchants by revenue' do
         visit merchants_path
         within '#statistics' do
