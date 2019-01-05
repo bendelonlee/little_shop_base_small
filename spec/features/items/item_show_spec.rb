@@ -7,7 +7,7 @@ RSpec.describe 'Item show page', type: :feature do
   before :each do
     @admin = create(:admin)
     @merchant = create(:merchant)
-    @discount = create(:discount, user: @merchant)
+    @discount = create(:discount, user: @merchant, discount_type: 'dollar')
     @item = create(:item, user: @merchant)
     @item_2 = create(:item, user: @merchant, inventory: 0)
     @user = create(:user)
