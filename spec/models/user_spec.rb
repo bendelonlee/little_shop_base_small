@@ -213,5 +213,29 @@ RSpec.describe User, type: :model do
       expect(actual[-4].revenue).to eq(8_000)
       expect(actual.first.revenue).to eq(600)
     end
+    it '.past_3_months_sales' do
+      merchant = create(:merchant)
+      item = create(:item, user: merchant)
+      create(:order_item, updated_at: Date.today.change(day: 1) - 1.days, price: 100_000_000, quantity: 2, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 1.days, price: 100_000_000, quantity: 2)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 1.days, price: 1_000, quantity: 2, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 2.days, price: 1_000, quantity: 4, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 3.days, price: 1_000, quantity: 6, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 4.days, price: 1_000, quantity: 4, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 4.days, price: 1_000, quantity: 4, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 6.days, price: 100, quantity: 10, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 8.days, price: 100, quantity: 9, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 10.days, price: 100, quantity: 8, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 11.days, price: 100, quantity: 7, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 88.days, price: 100, quantity: 6, item: item)
+      create(:fulfilled_order_item, updated_at: Date.today.change(day: 1) - 200.days, price: 100, quantity: 5, item: item)
+
+      actual = merchant.past_3_months_sales
+      expect(actual.length.between?(89,92)).to eq(true)
+      expect(actual.last['revenue']).to eq(2_000)
+      expect(actual[-2]['revenue']).to eq(4_000)
+      expect(actual[-4]['revenue']).to eq(8_000)
+      expect(actual.first['revenue']).to_not eq(500)
+    end
   end
 end
