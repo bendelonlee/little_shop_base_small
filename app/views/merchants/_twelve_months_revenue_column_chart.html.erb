@@ -4,7 +4,7 @@
 
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Month', 'Sales'],
+          ['', 'Sales in USD'],
           <% @twelve_months_revenue.each do |month| %>
             ['<%= Date::MONTHNAMES[month.month.month] %>', <%= month.revenue %>],
           <% end %>
