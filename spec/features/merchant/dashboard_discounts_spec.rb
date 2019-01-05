@@ -53,35 +53,56 @@ RSpec.describe 'Merchant discount Page' do
       end
     end
   end
-  describe "adding a discount with bad data gives errors" do
-    before(:each) do
+  describe "entering bad data into discount form gives errors" do
+    scenario 'when adding an item' do
       @merchant = create(:merchant)
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
       visit dashboard_discounts_path
       click_link "Add A Discount"
+      @submit = "Create Discount"
+      @am_adding = true
       expect(current_path).to eq(new_dashboard_discount_path)
     end
-    scenario "negative numbers and no type" do
+    scenario 'when editing an item' do
+      @merchant = create(:merchant)
+      @discount = create(:discount, user: @merchant)
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
+      visit dashboard_discounts_path
+      within "#discount-#{@discount.id}" do
+        click_on "Edit"
+      end
+      @submit = "Update Discount"
+      expect(current_path).to eq(edit_dashboard_discount_path(@discount))
+    end
+    after(:each) do
       fill_in :discount_value_off, with: "-1"
       fill_in :discount_min_amount, with: "-1"
-      click_on "Create Discount"
-
-      expect(page).to have_content("3 errors prohibited this discount from being saved:")
-      expect(page).to have_content("Discount type can't be blank")
+      click_on @submit
+      expect(page).to have_content("Discount type can't be blank") if @am_adding
+      expect(page).to_not have_content("Discount type can't be blank") unless @am_adding
       expect(page).to have_content("Value off must be greater than or equal to 0")
       expect(page).to have_content("Min amount must be greater than or equal to 0")
-      expect(Discount.count).to eq(0)
-    end
-    scenario "a non non-integer and blanks" do
+      expect(Discount.count).to eq(0) if @am_adding
+      expect(Discount.count).to eq(1) unless @am_adding
+
+      visit dashboard_discounts_path
+      if @am_adding
+        click_link "Add A Discount"
+      else
+        within "#discount-#{@discount.id}" do
+          click_on "Edit"
+        end
+      end
+
       fill_in :discount_value_off, with: "0.1"
       fill_in :discount_min_amount, with: ""
-      click_on "Create Discount"
+      click_on @submit
 
       expect(page).to have_content("Min amount can't be blank")
       expect(page).to have_content("Min amount is not a number")
       expect(page).to have_content("Value off must be an integer")
 
-      expect(Discount.count).to eq(0)
+      expect(Discount.count).to eq(0) if @am_adding
     end
   end
 

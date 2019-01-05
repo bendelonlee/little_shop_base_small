@@ -31,8 +31,13 @@ class Dashboard::DiscountsController < ApplicationController
   def update
     @discount = Discount.find(params[:id])
     @discount.update(discount_params)
-    flash[:success] = "Discount ##{@discount.id} has been updated."
-    redirect_to dashboard_discounts_path
+    if @discount.save
+      flash[:success] = "Discount ##{@discount.id} has been updated."
+      redirect_to dashboard_discounts_path
+    else
+      @form_path = [:dashboard, @discount]
+      render :edit
+    end
   end
 
   def destroy
