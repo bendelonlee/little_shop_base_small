@@ -11,8 +11,8 @@
       <strong>Sold by:</strong> <%= item.user.name %><br/>
       <strong>In stock:</strong> <%= item.inventory %>
     </p>
-    <% unless item.user.discounts.empty? %>
-      <% item.user.discounts.each do |discount|  %>
+    <% unless item.discounts.empty? %>
+      <% item.discounts.each do |discount|  %>
         <p><%= describe_discount(discount) %></p>
       <% end %>
     <% end %>

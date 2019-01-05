@@ -33,6 +33,11 @@ class Cart
     end
   end
 
+  def subtotal_before_discount(item_id)
+    item = Item.find(item_id)
+    item.price * count_of(item_id)
+  end
+
   def subtotal(item_id)
     item = Item.find(item_id)
     order_item = OrderItem.new(item: item, price: item.price, quantity: count_of(item.id))

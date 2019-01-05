@@ -73,14 +73,26 @@ RSpec.describe Cart do
     expect(cart.items).to eq([item_1, item_2])
   end
 
-  it '.subtotal' do
+  it '.subtotal_before_discount' do
     item_1 = create(:item)
+    discount = create(:discount, user: item_1.user, min_amount: 2)
     cart = Cart.new({})
     cart.add_item(item_1.id)
     cart.add_item(item_1.id)
     cart.add_item(item_1.id)
 
-    expect(cart.subtotal(item_1.id)).to eq(item_1.price * cart.total_count)
+    expect(cart.subtotal_before_discount(item_1.id)).to eq(item_1.price * cart.total_count)
+  end
+
+  it '.subtotal' do
+    item_1 = create(:item)
+    discount = create(:discount, user: item_1.user, min_amount: 2)
+    cart = Cart.new({})
+    cart.add_item(item_1.id)
+    cart.add_item(item_1.id)
+    cart.add_item(item_1.id)
+
+    expect(cart.subtotal(item_1.id)).to eq(item_1.price * cart.total_count - cart.amount_discounted(item_1))
   end
 
   it '.grand_total' do

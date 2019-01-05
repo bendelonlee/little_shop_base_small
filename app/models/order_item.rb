@@ -20,14 +20,14 @@ class OrderItem < ApplicationRecord
   before_validation :set_amount_discounted
 
   def applicable_discount
-    return nil if !item || item.user.discounts.empty?
-    order_amount = case item.user.discounts.first.discount_type
+    return nil if !item || item.discounts.empty?
+    order_amount = case item.discounts.first.discount_type
                   when "percent"
                     quantity
                   when "dollar"
                     undiscounted_subtotal
                   end
-    item.user.discounts.where("discounts.min_amount <= ?", order_amount)
+    item.discounts.where("discounts.min_amount <= ?", order_amount)
                        .order(value_off: :desc)
                        .limit(1).first
   end

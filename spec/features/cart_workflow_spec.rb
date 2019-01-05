@@ -194,6 +194,7 @@ RSpec.describe 'Cart workflow', type: :feature do
       scenario 'when discounts apply' do
         @item.update(inventory: 200)
         discount = create(:discount, user: @merchant, min_amount: 10, discount_type: 'percent', value_off: 10)
+        discount = create(:discount, user: @merchant, min_amount: 20, discount_type: 'percent', value_off: 20)
         @user = create(:user)
         not_expected_total = "30.00"
         expected_total = "27.00"
@@ -203,13 +204,19 @@ RSpec.describe 'Cart workflow', type: :feature do
 
         click_button "Add to Cart"
         visit cart_path
+
+        within "#item-#{@item.id}" do
+          expect(page).to have_content("Orders of 10 items or more recieve 10% off")
+          expect(page).to have_content("Orders of 20 items or more recieve 20% off")
+        end
+
         9.times do
           within "#item-#{@item.id}" do
             click_button 'Add more to cart'
           end
         end
         within "#item-#{@item.id}" do
-          expect(page).to have_content("Orders of 10 items or more recieve 10% off")
+          expect(page).to have_content("Before Discount: $30.00")
           expect(page).to have_content("Discounted: - $3.00")
         end
         expect(page).to have_content("Total: $#{expected_total}")

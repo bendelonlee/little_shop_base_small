@@ -4,11 +4,17 @@
     <img id="item-<%= item.id %>-image" alt="image for <%= item.name %>" src="<%= item.image %>" width="<%= img_width %>" />
     <p>Merchant: <%= item.user.name %></p>
     <p>Price: <%= number_to_currency(item.price) %></p>
+    <% if item.discounts %>
+      <% item.discounts.each do |discount|  %>
+        <p><%= describe_discount(discount) %></p>
+      <% end %>
+    <% end %>
     <p>Quantity: <%= @cart.count_of(item.id) %> of <%= item.inventory %> available</p>
     <% if @cart.applicable_discount(item) %>
+      <p>Before Discount: <%= number_to_currency(@cart.subtotal_before_discount(item.id)) %></p>
       <p>Discounted: - <%= number_to_currency(@cart.amount_discounted(item)) %></p>
-      <p><%= describe_discount(@cart.applicable_discount(item)) %></p>
     <% end %>
+
     <p>Subtotal: <%= number_to_currency(@cart.subtotal(item.id)) %></p>
     <p>
     <% if @cart.count_of(item.id) < item.inventory %>
