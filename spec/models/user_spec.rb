@@ -170,6 +170,23 @@ RSpec.describe User, type: :model do
         expect(@merchant.top_3_revenue_users[2]).to eq(@user_3)
         expect(@merchant.top_3_revenue_users[2].revenue).to eq(120)
       end
+      it '.merchants_by_revenue' do
+        @merchant_2, @merchant_no_fulfilled = create_list(:merchant, 2)
+
+        @item_5 = create(:item, inventory: 500, price: 1000, user: @merchant_2)
+        @item_6 = create(:item, inventory: 500, price: 1000, user: @merchant_no_fulfilled)
+
+        @order_6 = create(:completed_order, user: @user_1)
+        @oi_6 = create(:fulfilled_order_item, order: @order_6, item: @item_5, quantity: 20, price: 1000, updated_at: 2.months.ago)
+
+        @order_7 = create(:cancelled_order, user: @user_1)
+        @oi_7 = create(:order_item, order: @order_7, item: @item_6, quantity: 20, price: 1000, updated_at: 2.months.ago)
+
+        @order_8 = create(:order, user: @user_1)
+        @oi_8 = create(:order_item, order: @order_8, item: @item_6, quantity: 20, price: 1000, updated_at: 2.months.ago)
+
+        expect(User.merchants_by_revenue).to eq([@merchant_2, @merchant])
+      end
     end
   end
 end
