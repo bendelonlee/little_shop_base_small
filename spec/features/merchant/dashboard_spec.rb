@@ -185,8 +185,20 @@ RSpec.describe 'Merchant Dashboard page' do
       end
       it 'shows pie chart of items sold' do
         visit dashboard_path
-        page.all('body script', visible: false).each do |el|
-          expect(el.text(:all)).to include("data.addRows([ ['Sold', 15], ['Unsold', 80] ]")
+        within "#statistics" do
+          within "#quantity-sold" do
+            page.all('body script', visible: false).each do |el|
+              expect(el.text(:all)).to include("data.addRows([ ['Sold', 15], ['Unsold', 80] ]")
+            end
+          end
+        end
+      end
+      it "shows a bar chart of last year's sales by month" do
+        visit dashboard_path
+        within '#statistics' do
+          within '#last-years-sales-by-month' do
+            expect(page).to have_css("#last-years-sales-by-month-bar-chart")
+          end
         end
       end
       it 'shows top 5 items sold by quantity' do

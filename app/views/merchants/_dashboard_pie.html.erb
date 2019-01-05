@@ -13,8 +13,9 @@
 
     // Create the data table.
     var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Topping');
-    data.addColumn('number', 'Slices');
+
+    data.addColumn('string', 'Sold or Unsold');
+    data.addColumn('number', 'Amount');
     data.addRows([
       ['Sold', <%= sold %>],
       ['Unsold', <%= total - sold %>]
@@ -25,8 +26,8 @@
                    'height':300};
 
     // Instantiate and draw our chart, passing in some options.
-    var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+    var chart = new google.visualization.PieChart(document.getElementById('dashboard-sold-unsold-pie-chart'));
     chart.draw(data, options);
   }
 </script>
-<div id="chart_div"></div>
+<div id="dashboard-sold-unsold-pie-chart"></div>

@@ -61,7 +61,7 @@ class User < ApplicationRecord
     date_range = 3.months.ago.to_date.change(day: 1).. (Date.today.change(day: 1) - 1.day)
     result = OrderItem.select("sum(order_items.quantity * order_items.price) as revenue, date_trunc('day', order_items.updated_at) as date")
     .joins(:item)
-    .where(updated_at: date_range, items: {merchant_id: self.id} )
+    .where(updated_at: date_range, fulfilled: true, items: {merchant_id: self.id} )
     .group("date")
     .order("date")
     .as_json
@@ -70,6 +70,11 @@ class User < ApplicationRecord
       result << {"date" => day, "revenue" => 0}
     end
     result.sort_by{ |r| r["date"] }
+  end
+
+  def last_years_sales_by_month
+    date_range = 1.year.ago.to_date.change(day: 1).. (Date.today.change(day: 1) - 1.day)
+    OrderItem.last_years_sales_by_month.joins(:item).where(items: {merchant_id: self.id})
   end
 
   def self.merchants_by_revenue
@@ -136,4 +141,5 @@ class User < ApplicationRecord
       .order('revenue desc')
       .limit(3)
   end
+
 end

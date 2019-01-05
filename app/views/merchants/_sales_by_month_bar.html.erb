@@ -1,0 +1,25 @@
+<script type="text/javascript">
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Month', 'Sales'],
+          <% @last_years_sales_by_month.each do |month| %>
+            ['<%= Date::MONTHNAMES[month.month.month] %>', <%= month.revenue %>],
+          <% end %>
+        ]);
+
+        var options = {
+          chart: {
+            title: 'Company Performance',
+            subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+          }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('last-years-sales-by-month-bar-chart'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+    </script>
+    <div id="last-years-sales-by-month-bar-chart" style="width: 800px; height: 500px;"></div>

@@ -190,5 +190,28 @@ RSpec.describe User, type: :model do
         expect(actual.first.revenue).to eq(20_000)
       end
     end
+    it '.last_years_sales_by_month' do
+      merchant = create(:merchant)
+      item = create(:item, user: merchant)
+      create(:order_item, updated_at: 1.months.ago, price: 100_000_000, quantity: 2, item: item)
+      create(:fulfilled_order_item, updated_at: 1.months.ago, price: 100_000_000, quantity: 2)
+      create(:fulfilled_order_item, updated_at: 1.months.ago, price: 1_000, quantity: 2, item: item)
+      create(:fulfilled_order_item, updated_at: 2.months.ago, price: 1_000, quantity: 4, item: item)
+      create(:fulfilled_order_item, updated_at: 3.months.ago, price: 1_000, quantity: 6, item: item)
+      create(:fulfilled_order_item, updated_at: 4.months.ago, price: 1_000, quantity: 4, item: item)
+      create(:fulfilled_order_item, updated_at: 4.months.ago, price: 1_000, quantity: 4, item: item)
+      create(:fulfilled_order_item, updated_at: 6.months.ago, price: 100, quantity: 10, item: item)
+      create(:fulfilled_order_item, updated_at: 8.months.ago, price: 100, quantity: 9, item: item)
+      create(:fulfilled_order_item, updated_at: 10.months.ago, price: 100, quantity: 8, item: item)
+      create(:fulfilled_order_item, updated_at: 11.months.ago, price: 100, quantity: 7, item: item)
+      create(:fulfilled_order_item, updated_at: 12.months.ago, price: 100, quantity: 6, item: item)
+      create(:fulfilled_order_item, updated_at: 13.months.ago, price: 100, quantity: 5, item: item)
+
+      actual = merchant.last_years_sales_by_month
+      expect(actual.last.revenue).to eq(2_000)
+      expect(actual[-2].revenue).to eq(4_000)
+      expect(actual[-4].revenue).to eq(8_000)
+      expect(actual.first.revenue).to eq(600)
+    end
   end
 end

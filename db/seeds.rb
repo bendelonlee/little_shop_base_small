@@ -36,11 +36,22 @@ inactive_item_2 = create(:inactive_item, user: inactive_merchant_1)
 Random.new_seed
 rng = Random.new
 
-order = create(:completed_order, user: user)
-create(:fulfilled_order_item, order: order, item: item_1, price: 1, quantity: 1, created_at: rng.rand(3).days.ago, updated_at: rng.rand(59).minutes.ago)
-create(:fulfilled_order_item, order: order, item: item_2, price: 2, quantity: 1, created_at: rng.rand(23).hour.ago, updated_at: rng.rand(59).minutes.ago)
-create(:fulfilled_order_item, order: order, item: item_3, price: 3, quantity: 1, created_at: rng.rand(5).days.ago, updated_at: rng.rand(59).minutes.ago)
-create(:fulfilled_order_item, order: order, item: item_4, price: 4, quantity: 1, created_at: rng.rand(23).hour.ago, updated_at: rng.rand(59).minutes.ago)
+amounts = ((0..9).to_a + (1..5).to_a * 2 + (1..3).to_a * 3 + [21])
+quantity_amounts = amounts.reject{|n| n == 0}.shuffle.cycle
+amounts = amounts.cycle
+
+Item.all.each do |item|
+  amounts.next.times do
+    ordered_at = rand(24).months.ago + rand(30).days + rand(86400).seconds
+    fulfilled_at = ordered_at + amounts.next.days + rand(86400).seconds
+    amounts.next.times do
+      order = create(:completed_order, user: user)
+      amounts.next.times do
+        create(:fulfilled_order_item, order: order, item: item, price: item.price, quantity: quantity_amounts.next, created_at: ordered_at, updated_at: fulfilled_at)
+      end
+    end
+  end
+end
 
 order = create(:order, user: user)
 create(:order_item, order: order, item: item_1, price: 1, quantity: 1)
@@ -49,7 +60,3 @@ create(:fulfilled_order_item, order: order, item: item_2, price: 2, quantity: 1,
 order = create(:cancelled_order, user: user)
 create(:order_item, order: order, item: item_2, price: 2, quantity: 1, created_at: rng.rand(23).hour.ago, updated_at: rng.rand(59).minutes.ago)
 create(:order_item, order: order, item: item_3, price: 3, quantity: 1, created_at: rng.rand(23).hour.ago, updated_at: rng.rand(59).minutes.ago)
-
-order = create(:completed_order, user: user)
-create(:fulfilled_order_item, order: order, item: item_1, price: 1, quantity: 1, created_at: rng.rand(4).days.ago, updated_at: rng.rand(59).minutes.ago)
-create(:fulfilled_order_item, order: order, item: item_2, price: 2, quantity: 1, created_at: rng.rand(23).hour.ago, updated_at: rng.rand(59).minutes.ago)

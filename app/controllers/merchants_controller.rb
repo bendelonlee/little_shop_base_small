@@ -20,6 +20,7 @@ class MerchantsController < ApplicationController
   def show
     @merchant = current_user
     @orders = @merchant.my_pending_orders
+    @last_years_sales_by_month = @merchant.last_years_sales_by_month
     @top_5_items = @merchant.top_items_by_quantity(5)
     @qsp = @merchant.quantity_sold_percentage
     @top_3_states = @merchant.top_3_states

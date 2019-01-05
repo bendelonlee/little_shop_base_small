@@ -14,6 +14,9 @@ class Admin::MerchantsController < Admin::BaseController
       @most_items_user = @merchant.most_items_user
       @most_items_user = @merchant.most_items_user
       @top_3_revenue_users = @merchant.top_3_revenue_users
+      @past_3_months_sales = @merchant.past_3_months_sales
+      @last_years_sales_by_month = @merchant.last_years_sales_by_month
+
       render :'merchants/show'
     end
   end
