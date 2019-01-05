@@ -24,8 +24,8 @@ item_4 = create(:item, user: merchant_4)
 
 
 discount_1 = create(:discount, user: merchant_1)
-discount_2 = create(:discount, user: merchant_2)
-discount_3 = create(:discount, user: merchant_3)
+discount_2 = create(:discount, user: merchant_2, discount_type: "dollar")
+discount_3 = create(:discount, user: merchant_3, discount_type: "dollar")
 discount_4 = create(:discount, user: merchant_4)
 
 create_list(:item, 10, user: merchant_1)

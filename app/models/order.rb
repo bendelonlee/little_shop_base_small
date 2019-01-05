@@ -42,9 +42,12 @@ class Order < ApplicationRecord
     order_items.sum(:quantity)
   end
 
+  def total_before_discount
+    order_items.sum("quantity * price")
+  end
+
   def total_cost
-    oi = order_items.pluck("sum(quantity*price)")
-    oi.sum
+    total_before_discount - total_discount
   end
 
   def my_item_count(merchant_id)
@@ -82,5 +85,9 @@ class Order < ApplicationRecord
 
   def item_fulfilled?(item_id)
     order_items.where(item_id: item_id).pluck(:fulfilled).first
+  end
+
+  def total_discount
+    order_items.sum(:amount_discounted)
   end
 end

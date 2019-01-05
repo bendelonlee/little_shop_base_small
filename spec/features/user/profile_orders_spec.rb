@@ -53,10 +53,13 @@ RSpec.describe 'Profile Orders page', type: :feature do
           expect(page).to have_content("Last Update: #{@order.last_update}")
           expect(page).to have_content("Status: #{@order.status}")
           expect(page).to have_content("Item Count: #{@order.total_item_count}")
+          expect(page).to_not have_content("Cost Before Discount:")
+          expect(page).to_not have_content("Total Discount:")
           expect(page).to have_content("Total Cost: #{@order.total_cost}")
         end
       end
     end
+
     describe 'should show a single order show page' do
       before :each do
         yesterday = 1.day.ago
@@ -100,7 +103,35 @@ RSpec.describe 'Profile Orders page', type: :feature do
           expect(page).to have_content("Fulfilled: Yes")
         end
         expect(page).to have_content("Item Count: #{@order.total_item_count}")
+        expect(page).to_not have_content("Cost Before Discount:")
+        expect(page).to_not have_content("Total Discount:")
         expect(page).to have_content("Total Cost: #{number_to_currency(@order.total_cost)}")
+      end
+    end
+    describe 'should show discount information when applicable' do
+      before :each do
+        discount_1 = create(:discount, user: @merchant_1, min_amount: 5)
+        yesterday = 1.day.ago
+        @order = create(:order, user: @user, created_at: yesterday)
+        @oi_1 = create(:order_item, order: @order, item: @item_1, price: 1, quantity: 5, created_at: yesterday, updated_at: yesterday)
+        @oi_2 = create(:fulfilled_order_item, order: @order, item: @item_2, price: 2, quantity: 5, created_at: yesterday, updated_at: 2.hours.ago)
+      end
+      scenario 'as a registered user' do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@user.reload)
+        visit profile_order_path(@order)
+      end
+      scenario 'as an admin' do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@admin)
+        visit admin_user_order_path(@user, @order)
+      end
+      after :each do
+        expect(page).to_not have_content('You have no orders yet')
+
+        within "#order-#{@order.id}" do
+
+          expect(page).to have_content("Cost Before Discount: #{@order.total_before_discount}")
+          expect(page).to have_content("Total Discount: #{@order.total_discount}")
+        end
       end
     end
     describe 'allows me to cancel an order that is not yet complete' do

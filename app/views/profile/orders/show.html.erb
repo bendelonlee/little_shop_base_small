@@ -4,6 +4,10 @@
   <p>Last Update: <%= @order.last_update %></p>
   <p>Status: <%= @order.status %></p>
   <p>Item Count: <%= @order.total_item_count %></p>
+  <% unless @order.total_discount == 0 %>
+    <p>Cost Before Discount: <%= @order.total_before_discount %></p>
+    <p>Total Discount: <%= @order.total_discount %></p>
+  <% end %>
   <p>Total Cost: <%= number_to_currency(@order.total_cost) %></p>
 
   <% if @order.status == 'pending' %>

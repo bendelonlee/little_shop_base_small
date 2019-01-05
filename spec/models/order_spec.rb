@@ -73,14 +73,16 @@ RSpec.describe Order, type: :model do
 
   describe 'instance methods' do
     before :each do
+      @merchant = create(:merchant)
+      @discount_1 = create(:discount, user: @merchant, min_amount: 4, discount_type: 'percent', value_off: 10)
       user = create(:user)
-      @item_1 = create(:item)
-      @item_2 = create(:item)
+      @item_1 = create(:item, user: @merchant)
+      @item_2 = create(:item, user: @merchant)
       yesterday = 1.day.ago
 
       @order = create(:order, user: user, created_at: yesterday)
-      @oi_1 = create(:order_item, order: @order, item: @item_1, price: 1, quantity: 1, created_at: yesterday, updated_at: yesterday)
-      @oi_2 = create(:fulfilled_order_item, order: @order, item: @item_2, price: 2, quantity: 1, created_at: yesterday, updated_at: 2.hours.ago)
+      @oi_1 = create(:order_item, order: @order, item: @item_1, price: 1, quantity: 10, created_at: yesterday, updated_at: yesterday)
+      @oi_2 = create(:fulfilled_order_item, order: @order, item: @item_2, price: 2, quantity: 10, created_at: yesterday, updated_at: 2.hours.ago)
     end
 
     it '.last_udpate' do
@@ -92,7 +94,15 @@ RSpec.describe Order, type: :model do
     end
 
     it '.total_cost' do
-      expect(@order.total_cost).to eq((@oi_1.quantity*@oi_1.price) + (@oi_2.quantity*@oi_2.price))
+      expect(@order.total_cost).to eq((@oi_1.quantity*@oi_1.price) + (@oi_2.quantity*@oi_2.price) - @order.total_discount)
+    end
+
+    it '.total_before_discount' do
+      expect(@order.total_before_discount).to eq((@oi_1.quantity*@oi_1.price) + (@oi_2.quantity*@oi_2.price))
+    end
+
+    it '.total_discount' do
+      expect(@order.total_discount).to eq((@oi_1.amount_discounted) + (@oi_2.amount_discounted))
     end
 
     it '.my_item_count' do

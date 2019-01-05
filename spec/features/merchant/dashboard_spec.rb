@@ -291,8 +291,15 @@ RSpec.describe 'Merchant Dashboard page' do
         end
       end
     end
-  end
+    it "shows a link that takes me to my discount index" do
+      merchant = create(:merchant)
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(merchant)
 
+      visit dashboard_path
+      click_on "View Bulk Discounts"
+      expect(current_path).to eq(dashboard_discounts_path)
+    end
+  end
 
   context 'as an admin' do
   end

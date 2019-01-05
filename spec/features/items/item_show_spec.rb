@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 include ActionView::Helpers::NumberHelper
+include ApplicationHelper
 
 RSpec.describe 'Item show page', type: :feature do
   before :each do
     @admin = create(:admin)
     @merchant = create(:merchant)
+    @discount = create(:discount, user: @merchant, discount_type: 'dollar')
     @item = create(:item, user: @merchant)
     @item_2 = create(:item, user: @merchant, inventory: 0)
     @user = create(:user)
@@ -47,6 +49,7 @@ RSpec.describe 'Item show page', type: :feature do
         expect(page).to have_content("Price: #{number_to_currency(@item.price)}")
         expect(page).to have_content("In stock: #{@item.inventory}")
         expect(page).to have_content("Average time to fulfill: 12 hours, 15 minutes")
+        expect(page).to have_content(describe_discount(@discount))
       end
     end
   end
