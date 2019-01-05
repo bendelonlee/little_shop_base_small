@@ -193,11 +193,11 @@ RSpec.describe 'Merchant Dashboard page' do
           end
         end
       end
-      it "shows a bar chart of last year's sales by month" do
+      it "shows a bar chart of the past 12 month's sales by month" do
         visit dashboard_path
         within '#statistics' do
-          within '#last-years-sales-by-month' do
-            expect(page).to have_css("#last-years-sales-by-month-bar-chart")
+          within '#twelve-months-revenue' do
+            expect(page).to have_css("#twelve-months-revenue-column-chart")
           end
         end
       end

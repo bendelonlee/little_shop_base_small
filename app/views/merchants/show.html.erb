@@ -33,10 +33,10 @@
 <% end %>
 
 <%= tag.div id: 'statistics' do %>
-  <%= tag.div id: 'last-years-sales-by-month' do %>
-    <h4>Last Year's Revenue by Month</h4>
+  <%= tag.div id: 'twelve-months-revenue' do %>
+    <h4>Past 12 Months Revenue by Month</h4>
 
-    <%= render partial: "/merchants/sales_by_month_bar" %>
+    <%= render partial: "/merchants/twelve_months_revenue_column_chart" %>
   <% end %>
   <%= tag.div id: 'quarterly-revenue' do %>
     <h4>Last Quarter's Daily Revenue</h4>

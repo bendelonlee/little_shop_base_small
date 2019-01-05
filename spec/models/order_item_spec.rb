@@ -15,7 +15,7 @@ RSpec.describe OrderItem, type: :model do
   end
 
   describe 'class methods' do
-    it '.last_years_sales_by_month' do
+    it '.twelve_months_revenue' do
       create(:order_item, updated_at: 1.months.ago, price: 100_000_000, quantity: 2)
       create(:fulfilled_order_item, updated_at: 1.months.ago, price: 1_000, quantity: 2)
       create(:fulfilled_order_item, updated_at: 2.months.ago, price: 1_000, quantity: 4)
@@ -29,7 +29,7 @@ RSpec.describe OrderItem, type: :model do
       create(:fulfilled_order_item, updated_at: 12.months.ago, price: 100, quantity: 6)
       create(:fulfilled_order_item, updated_at: 13.months.ago, price: 100, quantity: 5)
 
-      actual = OrderItem.last_years_sales_by_month
+      actual = OrderItem.twelve_months_revenue
       expect(actual.last.revenue).to eq(2_000)
       expect(actual[-2].revenue).to eq(4_000)
       expect(actual[-4].revenue).to eq(8_000)

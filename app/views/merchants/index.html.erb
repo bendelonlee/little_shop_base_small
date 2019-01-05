@@ -36,10 +36,14 @@
 <hr>
 
 <%= tag.div id: "statistics" do %>
-<%= tag.div id: "merchants-by-revenue" do %>
-  <h4>All Merchants by Revenue</h4>
-  <%= render partial: "/merchants/merchants_by_revenue_pie" %>
-<% end %>
+  <%= tag.div id: "merchants-by-revenue" do %>
+    <h4>All Merchants by Revenue</h4>
+    <%= render partial: "/merchants/merchants_by_revenue_pie" %>
+  <% end %>
+  <%= tag.div id: "twelve-months-revenue" do %>
+    <h4>Past 12 Months Revenue from All Merchants</h4>
+    <%= render partial: "/merchants/twelve_months_revenue_column_chart" %>
+  <% end %>
   <%= tag.div id: "top-3-revenue-merchants" do %>
     <h4>Top 3 Merchants by Revenue</h4>
     <ol>

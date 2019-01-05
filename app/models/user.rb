@@ -72,9 +72,9 @@ class User < ApplicationRecord
     result.sort_by{ |r| r["date"] }
   end
 
-  def last_years_sales_by_month
+  def twelve_months_revenue
     date_range = 1.year.ago.to_date.change(day: 1).. (Date.today.change(day: 1) - 1.day)
-    OrderItem.last_years_sales_by_month.joins(:item).where(items: {merchant_id: self.id})
+    OrderItem.twelve_months_revenue.joins(:item).where(items: {merchant_id: self.id})
   end
 
   def self.merchants_by_revenue

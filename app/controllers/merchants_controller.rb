@@ -15,12 +15,14 @@ class MerchantsController < ApplicationController
     @top_3_states = Order.top_3_states
     @top_3_cities = Order.top_3_cities
     @top_3_quantity_orders = Order.top_3_quantity_orders
+    @twelve_months_revenue = OrderItem.twelve_months_revenue
+
   end
 
   def show
     @merchant = current_user
     @orders = @merchant.my_pending_orders
-    @last_years_sales_by_month = @merchant.last_years_sales_by_month
+    @twelve_months_revenue = @merchant.twelve_months_revenue
     @top_5_items = @merchant.top_items_by_quantity(5)
     @qsp = @merchant.quantity_sold_percentage
     @top_3_states = @merchant.top_3_states

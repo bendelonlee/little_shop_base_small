@@ -59,6 +59,14 @@ NYC, Seattle WA, Seattle FL
           end
         end
       end
+      it 'shows a chart of revenue from the past 12 months' do
+        visit merchants_path
+        within '#statistics' do
+          within '#twelve-months-revenue' do
+            expect(page).to have_css("#twelve-months-revenue-column-chart")
+          end
+        end
+      end
       it 'shows top 3 merchants by revenue' do
         visit merchants_path
         within '#statistics' do

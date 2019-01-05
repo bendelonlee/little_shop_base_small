@@ -190,7 +190,7 @@ RSpec.describe User, type: :model do
         expect(actual.first.revenue).to eq(20_000)
       end
     end
-    it '.last_years_sales_by_month' do
+    it '.twelve_months_revenue' do
       merchant = create(:merchant)
       item = create(:item, user: merchant)
       create(:order_item, updated_at: 1.months.ago, price: 100_000_000, quantity: 2, item: item)
@@ -207,7 +207,7 @@ RSpec.describe User, type: :model do
       create(:fulfilled_order_item, updated_at: 12.months.ago, price: 100, quantity: 6, item: item)
       create(:fulfilled_order_item, updated_at: 13.months.ago, price: 100, quantity: 5, item: item)
 
-      actual = merchant.last_years_sales_by_month
+      actual = merchant.twelve_months_revenue
       expect(actual.last.revenue).to eq(2_000)
       expect(actual[-2].revenue).to eq(4_000)
       expect(actual[-4].revenue).to eq(8_000)
