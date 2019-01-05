@@ -57,6 +57,17 @@ class User < ApplicationRecord
       .limit(count)
   end
 
+
+
+
+  def self.merchants_by_revenue
+    User.select("users.name, users.id, sum(order_items.quantity * order_items.price) as revenue")
+      .joins(items: :order_items)
+      .where('order_items.fulfilled = true')
+      .group('users.id')
+      .order('revenue desc')
+  end
+
   def quantity_sold_percentage
     sold = self.items.joins(:order_items).where('order_items.fulfilled=?', true).sum('order_items.quantity')
     total = self.items.sum(:inventory) + sold
