@@ -1,7 +1,8 @@
 class Dashboard::DiscountsController < ApplicationController
+  before_action :handle_admin_or_merchant_user, only: [:new, :edit, :update, :create]
+
   before_action :set_discount_type_for_edit, only: [:edit, :update]
   before_action :set_discount_type_for_new, only: [:new, :create]
-  before_action :handle_admin_or_merchant_user, only: [:update, :create]
 
 
   def new
@@ -23,6 +24,7 @@ class Dashboard::DiscountsController < ApplicationController
   def index
     @discounts = current_user.discounts
     @new_path = new_dashboard_discount_path
+    @edit_path = Proc.new { |discount| edit_dashboard_discount_path(discount) }
   end
 
   def edit
@@ -54,7 +56,8 @@ class Dashboard::DiscountsController < ApplicationController
 
   def handle_admin_or_merchant_user
     if current_admin?
-      @merchant = User.find(params[:merchant_id])
+      merchant_id = params[:merchant_id] || params[:id]
+      @merchant = User.find(merchant_id)
       @form_path = [:admin, @merchant, @item]
       @redirect_path = admin_merchant_discounts_path(@merchant)
     else
@@ -74,14 +77,14 @@ class Dashboard::DiscountsController < ApplicationController
   end
 
   def set_discount_type_for_new
-    if current_user.discounts.count > 0
-      @discount_type = current_user.discounts.first.discount_type
+    if @merchant.discounts.count > 0
+      @discount_type = @merchant.discounts.first.discount_type
     end
   end
 
   def set_discount_type_for_edit
-    if current_user.discounts.count > 1
-      @discount_type = current_user.discounts.first.discount_type
+    if @merchant.discounts.count > 1
+      @discount_type = @merchant.discounts.first.discount_type
     end
   end
 end
