@@ -1,6 +1,8 @@
 class Dashboard::DiscountsController < ApplicationController
   before_action :set_discount_type_for_edit, only: [:edit, :update]
   before_action :set_discount_type_for_new, only: [:new, :create]
+  before_action :handle_admin_or_merchant_user, only: [:update, :create]
+
 
   def new
     @discount = Discount.new
@@ -11,8 +13,7 @@ class Dashboard::DiscountsController < ApplicationController
     @discount = Discount.new(discount_params)
     if @discount.save
       flash[:success] = "Discount ##{@discount.id} has been created."
-
-      redirect_to dashboard_discounts_path
+      redirect_to @redirect_path
     else
       @form_path = [:dashboard, @discount]
       render :new
@@ -21,6 +22,7 @@ class Dashboard::DiscountsController < ApplicationController
 
   def index
     @discounts = current_user.discounts
+    @new_path = new_dashboard_discount_path
   end
 
   def edit
@@ -29,6 +31,7 @@ class Dashboard::DiscountsController < ApplicationController
   end
 
   def update
+    @merchant = current_user
     @discount = Discount.find(params[:id])
     @discount.update(discount_params)
     if @discount.save
@@ -49,12 +52,24 @@ class Dashboard::DiscountsController < ApplicationController
 
   private
 
+  def handle_admin_or_merchant_user
+    if current_admin?
+      @merchant = User.find(params[:merchant_id])
+      @form_path = [:admin, @merchant, @item]
+      @redirect_path = admin_merchant_discounts_path(@merchant)
+    else
+      @merchant = current_user
+      @form_path = [:dashboard, @item]
+      @redirect_path = dashboard_discounts_path
+    end
+  end
+
   def discount_params
     if @discount_type
       params[:discount][:discount_type] = @discount_type
     end
     dp = params.require(:discount).permit(:value_off, :min_amount, :discount_type)
-    dp[:user] = current_user
+    dp[:user] = @merchant
     dp
   end
 

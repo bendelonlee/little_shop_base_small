@@ -15,42 +15,63 @@ RSpec.describe 'Merchant discount Page' do
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
       visit dashboard_discounts_path
     end
+    scenario 'as an admin' do
+      @admin = create(:admin)
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@admin)
+      visit admin_merchant_discounts_path(@merchant)
+    end
     after(:each) do
       expect(page).to have_content("#{@discount_1.value_off}% off orders of #{@discount_1.min_amount} items or more.")
       expect(page).to have_content("$#{@discount_2.value_off} off orders of $#{@discount_2.min_amount} or more.")
       expect(page).to_not have_content("$#{@discount_3.value_off} off orders of $#{@discount_3.min_amount} or more.")
     end
   end
+
   describe 'I can add add a discount' do
     before(:each) do
       @merchant = create(:merchant)
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
+      @admin = create(:admin)
       @value_off = "10"
       @min_amount = "10"
-      visit dashboard_discounts_path
-      click_link "Add A Discount"
-      expect(current_path).to eq(new_dashboard_discount_path)
-      fill_in :discount_value_off, with: @value_off
-      fill_in :discount_min_amount, with: @min_amount
-
     end
-    it "with percent discount type" do
-      find('input[value="percent"]', visible: false).click
+    scenario 'as a merchant with percent discount type' do
+      @sign_in = Proc.new do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
+      end
+      @index_path = dashboard_discounts_path
+      @new_path = new_dashboard_discount_path
+      @discount_type = "percent"
       @expected = "#{@value_off}% off orders of #{@min_amount} items or more."
     end
-    it "with dollar discount type" do
-      find('input[value="dollar"]', visible: false).click
+    scenario 'as an admin with dollar discount type' do
+      @sign_in = Proc.new do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@admin.reload)
+        @index_path = admin_merchant_discounts_path(@merchant.reload)
+      end
+      @discount_type = "percent"
+      @index_path = admin_merchant_discounts_path(@merchant)
+      @new_path = new_admin_merchant_discount_path(@merchant)
+      @discount_type = "dollar"
       @expected = "$#{@value_off} off orders of $#{@min_amount} or more."
     end
     after(:each) do
+      @sign_in.call
+      visit @index_path
+      click_link "Add A Discount"
+      expect(current_path).to eq(@new_path)
+      fill_in :discount_value_off, with: @value_off
+      fill_in :discount_min_amount, with: @min_amount
+      find("input[value=\"#{@discount_type}\"]", visible: false).click
+
       click_on "Create Discount"
-      expect(current_path).to eq(dashboard_discounts_path)
+      expect(current_path).to eq(@index_path)
       expect(page).to have_content("Discount ##{Discount.last.id} has been created.")
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
-      visit(dashboard_discounts_path)
+      @sign_in.call
+      visit(@index_path)
       within "#discount-#{Discount.last.id}" do
         expect(page).to have_content(@expected)
       end
+      # end
     end
   end
   describe "entering bad data into discount form gives errors" do
