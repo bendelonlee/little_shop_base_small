@@ -221,20 +221,37 @@ RSpec.describe 'Merchant discount Page' do
     end
   end
 
+
   describe 'I can delete a discount' do
-    scenario 'when it has never been ordered' do
+    before(:each) do
       @merchant = create(:merchant)
+      @admin = create(:admin)
+    end
+    scenario 'as an admin' do
+      @sign_in = Proc.new do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@admin.reload)
+      end
+      @index_path = Proc.new { admin_merchant_discounts_path(@merchant) }
+    end
+    scenario 'as a merchant' do
+      @sign_in = Proc.new do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
+      end
+      @index_path = Proc.new { dashboard_discounts_path }
+    end
+    after(:each) do
       @discount = create(:discount, user: @merchant, discount_type: "percent")
-      @discount_2 = create(:discount, user: @merchant, discount_type: "percent")
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
-      visit dashboard_discounts_path
+      @surviving_discount = create(:discount, user: @merchant, discount_type: "percent")
+      @sign_in.call
+      visit(@index_path.call)
       within "#discount-#{@discount.id}" do
         click_on "Delete"
       end
       expect(page).to have_content("Discount ##{@discount.id} has been deleted.")
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
-      visit(dashboard_discounts_path)
-      expect(page).to have_content("#{@discount_2.value_off}% off orders of #{@discount_2.min_amount} items or more.")
+      expect(current_path).to eq(@index_path.call)
+      @sign_in.call
+      visit(@index_path.call)
+      expect(page).to have_content("#{@surviving_discount.value_off}% off orders of #{@surviving_discount.min_amount} items or more.")
       expect(page).to_not have_content("#{@discount.value_off}% off orders of #{@discount.min_amount} items or more.")
     end
   end

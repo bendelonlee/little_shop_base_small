@@ -39,6 +39,7 @@ Rails.application.routes.draw do
   patch '/admin/users/:merchant_id/items/:id', to: 'dashboard/items#update', as: 'admin_user_item'
   post '/admin/users/:merchant_id/discounts', to: 'dashboard/discounts#create', as: 'admin_user_discounts'
   patch '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#update', as: 'admin_user_discount'
+  delete '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#destroy', as: 'admin_merchant_discount'
   namespace :admin do
     resources :users, only: [:index, :show, :edit] do
       patch '/enable', to: 'users#enable', as: 'enable'

@@ -6,6 +6,6 @@
     <p> $<%= discount.value_off %> off orders of $<%= discount.min_amount %> or more. </p>
   <% end %>
   <%= link_to "Edit", @edit_path.call(discount) %>
-  <%= button_to "Delete", dashboard_discount_path(discount), method: :delete, data: {confirm: "Are you sure?"} %>
+  <%= button_to "Delete", @delete_path.call(discount), method: :delete, data: {confirm: "Are you sure?"} %>
   </div>
 </div>
