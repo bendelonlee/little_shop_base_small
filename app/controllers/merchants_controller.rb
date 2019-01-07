@@ -7,7 +7,6 @@ class MerchantsController < ApplicationController
       flags[:active] = true
     end
     @merchants = User.where(flags)
-
     @merchants_by_revenue = User.merchants_by_revenue
     @top_3_revenue_merchants = User.top_3_revenue_merchants
     @top_3_fulfilling_merchants = User.top_3_fulfilling_merchants
@@ -16,7 +15,6 @@ class MerchantsController < ApplicationController
     @top_3_cities = Order.top_3_cities
     @top_3_quantity_orders = Order.top_3_quantity_orders
     @twelve_months_revenue = OrderItem.twelve_months_revenue
-
   end
 
   def show
@@ -32,6 +30,8 @@ class MerchantsController < ApplicationController
     @most_items_user = @merchant.most_items_user
     @top_3_revenue_users = @merchant.top_3_revenue_users
     @past_3_months_sales = @merchant.past_3_months_sales
+
+    @discounts_path = dashboard_discounts_path
   end
 
   private

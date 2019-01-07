@@ -17,6 +17,7 @@ class Admin::MerchantsController < Admin::BaseController
       @past_3_months_sales = @merchant.past_3_months_sales
       @twelve_months_revenue = @merchant.twelve_months_revenue
 
+      @discounts_path = admin_merchant_discounts_path(@merchant)
       render :'merchants/show'
     end
   end
