@@ -8,7 +8,7 @@ class Discount < ApplicationRecord
 
   validates :min_amount, presence: true, numericality: {
     only_integer: true,
-    greater_than_or_equal_to: 0
+    greater_than_or_equal_to: 2
   }
 
   belongs_to :user

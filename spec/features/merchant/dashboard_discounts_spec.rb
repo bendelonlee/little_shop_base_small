@@ -128,12 +128,12 @@ RSpec.describe 'Merchant discount Page' do
           @click_form_link.call
           expect(current_path).to eq(@form_path)
           fill_in :discount_value_off, with: "-1"
-          fill_in :discount_min_amount, with: "-1"
+          fill_in :discount_min_amount, with: "1"
           click_on @submit
           expect(page).to have_content("Discount type can't be blank") if @am_adding
           expect(page).to_not have_content("Discount type can't be blank") unless @am_adding
           expect(page).to have_content("Value off must be greater than or equal to 0")
-          expect(page).to have_content("Min amount must be greater than or equal to 0")
+          expect(page).to have_content("Min amount must be greater than or equal to 2")
           expect(Discount.count).to eq(0) if @am_adding
           expect(Discount.count).to eq(1) unless @am_adding
 
