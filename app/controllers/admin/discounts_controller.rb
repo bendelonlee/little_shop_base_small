@@ -13,6 +13,9 @@ class Admin::DiscountsController < ApplicationController
     @merchant = User.find(params[:merchant_id])
     @discount = Discount.new
     @form_path = [:admin, @merchant, @discount]
+    if @merchant.discounts.count > 0
+      @discount_type = @merchant.discounts.first.discount_type
+    end
     render "/dashboard/discounts/new"
   end
 
@@ -20,6 +23,9 @@ class Admin::DiscountsController < ApplicationController
     @merchant = User.find(params[:merchant_id])
     @discount = Discount.find(params[:id])
     @form_path = [:admin, @merchant, @discount]
+    if @merchant.discounts.count > 1
+      @discount_type = @merchant.discounts.first.discount_type
+    end
     render "/dashboard/discounts/new"
   end
 end

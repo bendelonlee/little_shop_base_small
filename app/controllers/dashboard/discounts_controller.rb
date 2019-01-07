@@ -82,7 +82,7 @@ class Dashboard::DiscountsController < ApplicationController
     end
   end
 
-  def set_discount_type_for_edit
+  def set_discount_type_for_edit    
     if @merchant.discounts.count > 1
       @discount_type = @merchant.discounts.first.discount_type
     end
