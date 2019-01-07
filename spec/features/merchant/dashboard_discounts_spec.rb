@@ -154,35 +154,54 @@ RSpec.describe 'Merchant discount Page' do
     end
   end
 
-  describe 'I can edit a discount' do
-    scenario 'with good info' do
+  describe 'I can edit a discount with good info' do
+    before(:each) do
       @merchant = create(:merchant)
+      @admin = create(:admin)
       @discount = create(:discount, user: @merchant, discount_type: "percent")
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
+    end
+    scenario 'as an admin' do
+      @sign_in = Proc.new do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@admin.reload)
+      end
+      @index_path = admin_merchant_discounts_path(@merchant)
+      @edit_path = edit_admin_merchant_discount_path(@merchant, @discount)
+    end
+    scenario 'as a merchant' do
+      @sign_in = Proc.new do
+        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
+      end
+      @index_path = dashboard_discounts_path
+      @edit_path = edit_dashboard_discount_path(@discount)
+    end
+    after(:each) do
       @new_value_off = "101"
       @new_min_amount = "101"
       @new_discount_type = "dollar"
-      visit dashboard_discounts_path
+      @sign_in.call
+
+      visit @index_path
       within "#discount-#{@discount.id}" do
         click_on "Edit"
       end
 
-      expect(current_path).to eq(edit_dashboard_discount_path(@discount))
+      expect(current_path).to eq(@edit_path)
       fill_in :discount_value_off, with: @new_value_off
       fill_in :discount_min_amount, with: @new_min_amount
       find("input[value=\"#{@new_discount_type}\"]", visible: false).click
 
       click_on "Update Discount"
 
-      expect(current_path).to eq(dashboard_discounts_path)
+      expect(current_path).to eq(@index_path)
       expect(page).to have_content("Discount ##{@discount.id} has been updated.")
-      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
-      visit(dashboard_discounts_path)
+      @sign_in.call
+      visit(@index_path)
       within "#discount-#{Discount.last.id}" do
         expect(page).to have_content("$#{@new_value_off} off orders of $#{@new_min_amount} or more.")
       end
     end
   end
+
   describe "when a discount isn't the first, there is no choice for discount type" do
     before(:each) do
       @merchant = create(:merchant)
@@ -231,26 +250,26 @@ RSpec.describe 'Merchant discount Page' do
       @sign_in = Proc.new do
         allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@admin.reload)
       end
-      @index_path = Proc.new { admin_merchant_discounts_path(@merchant) }
+      @index_path = admin_merchant_discounts_path(@merchant)
     end
     scenario 'as a merchant' do
       @sign_in = Proc.new do
         allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant.reload)
       end
-      @index_path = Proc.new { dashboard_discounts_path }
+      @index_path = dashboard_discounts_path
     end
     after(:each) do
       @discount = create(:discount, user: @merchant, discount_type: "percent")
       @surviving_discount = create(:discount, user: @merchant, discount_type: "percent")
       @sign_in.call
-      visit(@index_path.call)
+      visit(@index_path)
       within "#discount-#{@discount.id}" do
         click_on "Delete"
       end
       expect(page).to have_content("Discount ##{@discount.id} has been deleted.")
-      expect(current_path).to eq(@index_path.call)
+      expect(current_path).to eq(@index_path)
       @sign_in.call
-      visit(@index_path.call)
+      visit(@index_path)
       expect(page).to have_content("#{@surviving_discount.value_off}% off orders of #{@surviving_discount.min_amount} items or more.")
       expect(page).to_not have_content("#{@discount.value_off}% off orders of #{@discount.min_amount} items or more.")
     end

@@ -34,7 +34,6 @@ class Dashboard::DiscountsController < ApplicationController
   end
 
   def update
-    @merchant = current_user
     @discount = Discount.find(params[:id])
     @discount.update(discount_params)
     if @discount.save
