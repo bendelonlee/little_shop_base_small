@@ -24,7 +24,7 @@ Rails.application.routes.draw do
       patch '/items/:id/fulfill', to: 'orders#fulfill_item', as: 'item_fulfill'
     end
     resources :items, except: [:show]
-    resources :discounts, except: [:show]
+    resources :discounts
     patch '/items/:id/enable', to: 'items#enable', as: 'enable_item'
     patch '/items/:id/disable', to: 'items#disable', as: 'disable_item'
   end
@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   post '/admin/users/:merchant_id/discounts', to: 'dashboard/discounts#create', as: 'admin_user_discounts'
   patch '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#update', as: 'admin_user_discount'
   delete '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#destroy', as: 'admin_merchant_discount'
+  get '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#show'
   namespace :admin do
     resources :users, only: [:index, :show, :edit] do
       patch '/enable', to: 'users#enable', as: 'enable'
@@ -52,7 +53,7 @@ Rails.application.routes.draw do
       patch '/disable', to: 'merchants#disable', as: 'disable'
       patch '/upgrade', to: 'merchants#downgrade', as: 'downgrade'
       resources :items, only: [:index, :new, :edit]
-      resources :discounts, only: [:index, :new, :edit]
+      resources :discounts, only: [:show, :index, :new, :edit]
     end
     resources :dashboard, only: [:index]
   end

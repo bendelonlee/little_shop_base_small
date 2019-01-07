@@ -25,7 +25,11 @@ class Dashboard::DiscountsController < ApplicationController
     @discounts = current_user.discounts
     @new_path = new_dashboard_discount_path
     @edit_path = Proc.new { |discount| edit_dashboard_discount_path(discount) }
-    @delete_path = Proc.new { |discount| dashboard_discount_path(discount) }
+    @discount_path = Proc.new { |discount| dashboard_discount_path(discount) }
+  end
+
+  def show
+
   end
 
   def edit
@@ -82,7 +86,7 @@ class Dashboard::DiscountsController < ApplicationController
     end
   end
 
-  def set_discount_type_for_edit    
+  def set_discount_type_for_edit
     if @merchant.discounts.count > 1
       @discount_type = @merchant.discounts.first.discount_type
     end
