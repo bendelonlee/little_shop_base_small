@@ -4,4 +4,13 @@ describe Discount do
   it { should validate_presence_of :discount_type }
   it { should validate_presence_of :min_amount }
   it { should belong_to :user }
+
+  describe 'instance_methods' do
+    it '.oi_quantity_distribution' do
+      @merchant = create(:merchant)
+      @item = create(:item, user: @merchant)
+      @oi_1 = create(:fulfilled_order_item, item: @item, quantity: 100)
+      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 0)
+    end
+  end
 end
