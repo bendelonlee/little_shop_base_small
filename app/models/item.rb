@@ -14,6 +14,14 @@ class Item < ApplicationRecord
     greater_than_or_equal_to: 0
   }
 
+  def self.price_candlestick_data
+    Item.select("PERCENTILE_CONT(0) WITHIN GROUP ( ORDER BY price) as lowest,
+                 PERCENTILE_CONT(0.25) WITHIN GROUP ( ORDER BY price) as low_q,
+                 PERCENTILE_CONT(0.5) WITHIN GROUP ( ORDER BY price) as median,
+                 PERCENTILE_CONT(0.75) WITHIN GROUP ( ORDER BY price) as high_q,
+                 PERCENTILE_CONT(1) WITHIN GROUP ( ORDER BY price) as highest")[0]
+  end
+
   def self.item_popularity(count, order)
     Item.joins(:order_items)
       .select("items.*, sum(order_items.quantity) as total_ordered")

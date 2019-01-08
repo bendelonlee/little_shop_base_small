@@ -5,8 +5,12 @@ class Admin::DiscountsController < ApplicationController
     @discounts = @merchant.discounts
     @new_path = new_admin_merchant_discount_path(@merchant)
     @edit_path = Proc.new { |discount| edit_admin_merchant_discount_path(@merchant, discount) }
-    @delete_path = Proc.new { |discount| admin_merchant_discount_path(@merchant, discount) }
+    @discount_path = Proc.new { |discount| admin_merchant_discount_path(@merchant, discount) }
     render "/dashboard/discounts/index"
+  end
+
+  def show
+    render "/dashboard/discounts/show"
   end
 
   def new

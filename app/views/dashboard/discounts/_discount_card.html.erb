@@ -1,5 +1,11 @@
 <div class="card float-left m-3" style="width: 18rem;">
   <div class="card-body">
+    <%= link_to "Discount ##{discount.id}", @discount_path.call(discount) %>
+    <ul>
+      <li>
+        Created at: <%= discount.created_at %>
+      </li>
+    </ul>
   <% if discount.percent? %>
     <p> <%= discount.value_off %>% off orders of <%= discount.min_amount %> items or more. </p>
   <% elsif discount.dollar? %>
@@ -9,6 +15,6 @@
     <p class="warning"> WARNING: Because only the discount with the highest value off can apply to an order, this discount will never be used. </p>
   <% end %>
   <%= link_to "Edit", @edit_path.call(discount) %>
-  <%= button_to "Delete", @delete_path.call(discount), method: :delete, data: {confirm: "Are you sure?"} %>
+  <%= button_to "Delete", @discount_path.call(discount), method: :delete, data: {confirm: "Are you sure?"} %>
   </div>
 </div>

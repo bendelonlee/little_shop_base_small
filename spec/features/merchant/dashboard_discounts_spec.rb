@@ -3,7 +3,7 @@ require "rails_helper"
 include ActionView::Helpers::NumberHelper
 
 RSpec.describe 'Merchant discount Page' do
-  describe 'should show discount information' do
+  describe 'should show discount information and link to a show page' do
     before(:each) do
       @merchant = create(:merchant)
       @merchant_2 = create(:merchant)
@@ -14,16 +14,28 @@ RSpec.describe 'Merchant discount Page' do
     scenario 'as a merchant' do
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@merchant)
       visit dashboard_discounts_path
+      @expected_show_path = dashboard_discount_path(@discount_1)
     end
     scenario 'as an admin' do
       @admin = create(:admin)
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@admin)
       visit admin_merchant_discounts_path(@merchant)
+      @expected_show_path = admin_merchant_discount_path(@merchant, @discount_1)
     end
     after(:each) do
-      expect(page).to have_content("#{@discount_1.value_off}% off orders of #{@discount_1.min_amount} items or more.")
-      expect(page).to have_content("$#{@discount_2.value_off} off orders of $#{@discount_2.min_amount} or more.")
+      within "#discount-#{@discount_1.id}" do
+        expect(page).to have_content("#{@discount_1.value_off}% off orders of #{@discount_1.min_amount} items or more.")
+        expect(page).to have_content("Discount ##{@discount_1.id}")
+      end
+      within "#discount-#{@discount_2.id}" do
+        expect(page).to have_content("$#{@discount_2.value_off} off orders of $#{@discount_2.min_amount} or more.")
+        expect(page).to have_content("Discount ##{@discount_2.id}")
+      end
       expect(page).to_not have_content("$#{@discount_3.value_off} off orders of $#{@discount_3.min_amount} or more.")
+      expect(page).to_not have_content("Discount ##{@discount_3.id}")
+
+      click_on("Discount ##{@discount_1.id}")
+      expect(current_path).to eq(@expected_show_path)
     end
   end
 
@@ -189,7 +201,6 @@ RSpec.describe 'Merchant discount Page' do
               sign_in.call
               visit index_path
               @click_form_link.call
-              save_and_open_page
               fill_in :discount_value_off, with: "3"
               fill_in :discount_min_amount, with: "2"
               find("input[value='dollar']", visible: false).click if @am_adding

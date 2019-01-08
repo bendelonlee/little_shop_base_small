@@ -35,6 +35,24 @@ RSpec.describe OrderItem, type: :model do
       expect(actual[-4].revenue).to eq(8_000)
       expect(actual.first.revenue).to eq(600)
     end
+    it '.oi_quantity_distribution' do
+      @merchant = create(:merchant)
+      @item = create(:item, user: @merchant)
+      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 3)
+      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 2)
+      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 1)
+      @oi_3 = create(:fulfilled_order_item, item: @item, quantity: 75)
+
+      @oi_4 = create(:fulfilled_order_item, quantity: 100)
+      actual = OrderItem.quantity_distribution[0]
+
+      expect(actual.lowest).to eq(1)
+      expect(actual.low_q).to eq(2)
+      expect(actual.median).to eq(3)
+      expect(actual.high_q).to eq(75)
+
+      expect(actual.highest).to eq(100)
+    end
   end
 
   describe 'instance methods' do

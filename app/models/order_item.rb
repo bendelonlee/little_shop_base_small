@@ -26,6 +26,14 @@ class OrderItem < ApplicationRecord
     .order("month")
   end
 
+  def self.quantity_distribution
+    OrderItem.select("PERCENTILE_CONT(0) WITHIN GROUP ( ORDER BY order_items.quantity) as lowest,
+             PERCENTILE_CONT(0.25) WITHIN GROUP ( ORDER BY order_items.quantity) as low_q,
+             PERCENTILE_CONT(0.5) WITHIN GROUP ( ORDER BY order_items.quantity) as median,
+             PERCENTILE_CONT(0.75) WITHIN GROUP ( ORDER BY order_items.quantity) as high_q,
+             PERCENTILE_CONT(1) WITHIN GROUP ( ORDER BY order_items.quantity) as highest")
+  end
+
   def applicable_discount
     return nil if !item || item.discounts.empty?
     order_amount = case item.discounts.first.discount_type

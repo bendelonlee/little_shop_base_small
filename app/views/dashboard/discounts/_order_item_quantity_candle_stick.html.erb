@@ -1,0 +1,21 @@
+<script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+
+      ['Item Prices in USD', <%= @pcd.lowest  %>, <%= @pcd.low_q %>, <%= @pcd.high_q  %>, <%= @pcd.highest  %>]
+      // Treat first row as data as well.
+    ], true);
+
+    var options = {
+      legend:'none'
+    };
+
+    var chart = new google.visualization.CandlestickChart(document.getElementById('order_item_quantity_candle_stick'));
+
+    chart.draw(data, options);
+  }
+    </script>
+<div id="order_item_quantity_candle_stick"></div>
