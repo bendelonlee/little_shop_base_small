@@ -1,6 +1,11 @@
 <div class="card float-left m-3" style="width: 18rem;">
   <div class="card-body">
     <%= link_to "Discount ##{discount.id}", @discount_path.call(discount) %>
+    <ul>
+      <li>
+        Created at: <%= discount.created_at %>
+      </li>
+    </ul>
   <% if discount.percent? %>
     <p> <%= discount.value_off %>% off orders of <%= discount.min_amount %> items or more. </p>
   <% elsif discount.dollar? %>

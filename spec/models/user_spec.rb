@@ -237,5 +237,57 @@ RSpec.describe User, type: :model do
       expect(actual[-4]['revenue']).to eq(8_000)
       expect(actual.first['revenue']).to_not eq(500)
     end
+
+    it '.oi_quantity_distribution' do
+      @merchant = create(:merchant)
+      @item = create(:item, user: @merchant)
+      create(:fulfilled_order_item, item: @item, quantity: 3)
+      create(:fulfilled_order_item, item: @item, quantity: 2)
+      create(:fulfilled_order_item, item: @item, quantity: 1)
+      create(:fulfilled_order_item, item: @item, quantity: 75)
+      create(:fulfilled_order_item, item: @item, quantity: 100)
+      create(:fulfilled_order_item, quantity: 100)
+      actual = @merchant.oi_quantity_distribution[0]
+
+      expect(actual.lowest).to eq(1)
+      expect(actual.low_q).to eq(2)
+      expect(actual.median).to eq(3)
+      expect(actual.high_q).to eq(75)
+
+      expect(actual.highest).to eq(100)
+    end
+
+    describe 'before and after discount' do
+      before(:each) do
+        @merchant = create(:merchant)
+        @item = create(:item, user: @merchant)
+        @discount = create(:discount, user: @merchant, created_at: 2.days.ago)
+        create(:fulfilled_order_item, item: @item, quantity: 3, updated_at: 3.days.ago)
+        create(:fulfilled_order_item, item: @item, quantity: 2, updated_at: 3.days.ago)
+        create(:fulfilled_order_item, item: @item, quantity: 1, updated_at: 3.days.ago)
+        create(:fulfilled_order_item, item: @item, quantity: 75, updated_at: 3.days.ago)
+        create(:fulfilled_order_item, item: @item, quantity: 100, updated_at: 3.days.ago)
+        create(:fulfilled_order_item, item: @item, quantity: 100, updated_at: 1.days.ago)
+        create(:fulfilled_order_item, quantity: 100, updated_at: 3.days.ago)
+      end
+
+      it 'oi_quant_d_before_discount' do
+        actual = @merchant.oi_quant_d_before_discount(@discount)[0]
+        expect(actual.lowest).to eq(1)
+        expect(actual.low_q).to eq(2)
+        expect(actual.median).to eq(3)
+        expect(actual.high_q).to eq(75)
+        expect(actual.highest).to eq(100)
+      end
+
+      it 'oi_quant_d_after_discount' do
+        actual = @merchant.oi_quant_d_after_discount(@discount)[0]
+        expect(actual.lowest).to eq(100)
+        expect(actual.low_q).to eq(100)
+        expect(actual.median).to eq(100)
+        expect(actual.high_q).to eq(100)
+        expect(actual.highest).to eq(100)
+      end
+    end
   end
 end

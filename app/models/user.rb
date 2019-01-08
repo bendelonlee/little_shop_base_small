@@ -142,4 +142,16 @@ class User < ApplicationRecord
       .limit(3)
   end
 
+  def oi_quantity_distribution
+    OrderItem.quantity_distribution.joins(item: :user).where(items: {merchant_id: self.id})
+  end
+
+  def oi_quant_d_before_discount(discount)
+    oi_quantity_distribution.where("order_items.updated_at < ?", discount.created_at)
+  end
+
+  def oi_quant_d_after_discount(discount)
+    oi_quantity_distribution.where("order_items.updated_at > ?", discount.created_at)
+  end
+
 end

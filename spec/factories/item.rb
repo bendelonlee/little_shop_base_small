@@ -5,7 +5,7 @@ FactoryBot.define do
     sequence(:description) { |n| "Description #{n}" }
     sequence(:image) { |n| "https://picsum.photos/200/300?image=#{n}" }
     sequence(:price) { |n| ("#{n}".to_i+1)*1.5 }
-    sequence(:inventory) { |n| ("#{n}".to_i+1)*2 }
+    inventory { rand(100) }
     active { true }
   end
 

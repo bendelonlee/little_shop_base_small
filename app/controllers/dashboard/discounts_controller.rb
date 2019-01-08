@@ -29,7 +29,13 @@ class Dashboard::DiscountsController < ApplicationController
   end
 
   def show
-
+    @discount = Discount.find(params[:id])
+    @oiq = OrderItem.quantity_distribution
+    @yoiq = @merchant.oi_quantity_distribution
+    @qbd = @merchant.oi_quant_d_before_discount(@discount)
+    @qad = @merchant.oi_quant_d_after_discount(@discount)
+    @discount_path = Proc.new { |discount| dashboard_discount_path(discount) }
+    @edit_path = Proc.new { |discount| edit_dashboard_discount_path(discount) }
   end
 
   def edit

@@ -6,11 +6,11 @@ describe Discount do
   it { should belong_to :user }
 
   describe 'instance_methods' do
-    it '.oi_quantity_distribution' do
+    it '.quantity_distribution' do
       @merchant = create(:merchant)
       @item = create(:item, user: @merchant)
       @oi_1 = create(:fulfilled_order_item, item: @item, quantity: 100)
-      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 0)
+      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 1)
     end
   end
 end
