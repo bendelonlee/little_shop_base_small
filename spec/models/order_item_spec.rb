@@ -106,7 +106,7 @@ RSpec.describe OrderItem, type: :model do
 
           lower_discount = create(:discount, user: merchant, min_amount: 10, discount_type: 'dollar', value_off: 2)
           higher_discount = create(:discount, user: merchant, min_amount: 20, discount_type: 'dollar', value_off: 3)
-          other_discount = create(:discount, min_amount: 5, discount_type: 'dollar', value_off: 20)
+          other_discount = create(:discount, min_amount: 21, discount_type: 'dollar', value_off: 20)
           expect(oi.applicable_discount).to eq(higher_discount)
         end
       end
@@ -118,7 +118,7 @@ RSpec.describe OrderItem, type: :model do
 
         lower_discount = create(:discount, user: merchant, min_amount: 10, discount_type: 'dollar', value_off: 2)
         higher_discount = create(:discount, user: merchant, min_amount: 20, discount_type: 'dollar', value_off: 3)
-        other_discount = create(:discount, min_amount: 5, discount_type: 'dollar', value_off: 20)
+        other_discount = create(:discount, min_amount: 54, discount_type: 'dollar', value_off: 20)
 
         oi = create(:order_item, quantity: 7, price: 3, item: item)
 

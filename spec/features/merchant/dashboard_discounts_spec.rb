@@ -138,13 +138,7 @@ RSpec.describe 'Merchant discount Page' do
           expect(Discount.count).to eq(1) unless @am_adding
 
           visit index_path
-          if @am_adding
-            click_link "Add A Discount"
-          else
-            within "#discount-#{@discount.id}" do
-              click_on "Edit"
-            end
-          end
+          @click_form_link.call
 
           fill_in :discount_value_off, with: "0.1"
           fill_in :discount_min_amount, with: ""
@@ -155,6 +149,57 @@ RSpec.describe 'Merchant discount Page' do
           expect(page).to have_content("Value off must be an integer")
 
           expect(Discount.count).to eq(0) if @am_adding
+
+          visit index_path
+          @click_form_link.call
+
+          fill_in :discount_value_off, with: "100"
+          fill_in :discount_min_amount, with: "10"
+          find("input[value=\"#{"percent"}\"]", visible: false).click if @am_adding
+
+          click_on @submit
+
+          expect(page).to have_content("Discount percentage cannot be greater than 99")
+
+          expect(Discount.count).to eq(0) if @am_adding
+
+          visit index_path
+          @click_form_link.call
+
+          fill_in :discount_value_off, with: "99"
+          fill_in :discount_min_amount, with: "10"
+
+          click_on @submit
+
+          expect(page).to_not have_content("Dollars off cannot exceed minimum amount")
+
+          expect(Discount.count).to eq(0) if @am_adding
+          expect(Discount.count).to eq(1) unless @am_adding
+
+          Discount.destroy_all
+          create(:discount, user: @merchant, discount_type: "dollar", min_amount: 40, value_off: 10)
+          @discount = create(:discount, user: @merchant, discount_type: "dollar", min_amount: 60, value_off: 20)
+          sign_in.call
+          visit index_path
+          @click_form_link.call
+          #
+          fill_in :discount_value_off, with: "99"
+          fill_in :discount_min_amount, with: "10"
+
+          click_on @submit
+          #
+          expect(page).to have_content("Dollars off must be less than the minimum amount")
+          expect(Discount.count).to eq(2)
+
+          visit index_path
+          @click_form_link.call
+          #
+          fill_in :discount_value_off, with: "5"
+          fill_in :discount_min_amount, with: "43"
+
+          click_on @submit
+          #
+          # expect(page).to have_content("Because only the discount with the highest value off can apply to an order, this discount would be unusable: '$5 off orders of $40 or more.'")
         end
       end
 
@@ -164,8 +209,8 @@ RSpec.describe 'Merchant discount Page' do
           @discount = create(:discount, user: @merchant, discount_type: "percent")
 
           sign_in.call
-          @new_value_off = "101"
-          @new_min_amount = "101"
+          @new_value_off = "98"
+          @new_min_amount = "99"
           @new_discount_type = "dollar"
           visit index_path
         end
@@ -217,8 +262,8 @@ RSpec.describe 'Merchant discount Page' do
       @edit_path = edit_dashboard_discount_path(@discount)
     end
     after(:each) do
-      @new_value_off = "101"
-      @new_min_amount = "101"
+      @new_value_off = 98
+      @new_min_amount = 99
       @new_discount_type = "dollar"
       @sign_in.call
 
@@ -233,7 +278,6 @@ RSpec.describe 'Merchant discount Page' do
       find("input[value=\"#{@new_discount_type}\"]", visible: false).click
 
       click_on "Update Discount"
-
       expect(current_path).to eq(@index_path)
       expect(page).to have_content("Discount ##{@discount.id} has been updated.")
       @sign_in.call
