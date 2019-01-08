@@ -12,7 +12,7 @@ class Admin::DiscountsController < ApplicationController
   def new
     @merchant = User.find(params[:merchant_id])
     @discount = Discount.new
-    @form_path = [:admin, @merchant, @discount]
+    @form_path = Proc.new{ [:admin, @merchant, @discount] }
     if @merchant.discounts.count > 0
       @discount_type = @merchant.discounts.first.discount_type
     end
@@ -22,7 +22,7 @@ class Admin::DiscountsController < ApplicationController
   def edit
     @merchant = User.find(params[:merchant_id])
     @discount = Discount.find(params[:id])
-    @form_path = [:admin, @merchant, @discount]
+    @form_path = Proc.new{ [:admin, @merchant, @discount] }
     if @merchant.discounts.count > 1
       @discount_type = @merchant.discounts.first.discount_type
     end

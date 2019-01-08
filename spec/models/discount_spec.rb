@@ -28,7 +28,7 @@ describe Discount do
     end
 
     it 'should validate a discount dollars off is less than the minimum amount' do
-      discount = Discount.create(value_off: 2, min_amount: 1, discount_type: "dollar")
+      discount = Discount.create(value_off: 3, min_amount: 3, discount_type: "dollar")
       expect(discount.errors[:min_amount]).to include("Dollars off must be less than the minimum amount")
     end
 

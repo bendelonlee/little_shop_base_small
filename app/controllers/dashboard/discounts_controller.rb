@@ -7,7 +7,6 @@ class Dashboard::DiscountsController < ApplicationController #Dashboard::BaseCon
 
   def new
     @discount = Discount.new
-    @form_path = [:dashboard, @discount]
   end
 
   def create
@@ -16,7 +15,11 @@ class Dashboard::DiscountsController < ApplicationController #Dashboard::BaseCon
       flash[:success] = "Discount ##{@discount.id} has been created."
       redirect_to @index_path
     else
-      @form_path = [:dashboard, @discount]
+      if current_admin?
+
+      else
+      end
+
       render :new
     end
   end
@@ -30,7 +33,6 @@ class Dashboard::DiscountsController < ApplicationController #Dashboard::BaseCon
 
   def edit
     @discount = Discount.find(params[:id])
-    @form_path = [:dashboard, @discount]
   end
 
   def update
@@ -40,7 +42,6 @@ class Dashboard::DiscountsController < ApplicationController #Dashboard::BaseCon
       flash[:success] = "Discount ##{@discount.id} has been updated."
       redirect_to @index_path
     else
-      @form_path = [:dashboard, @discount]
       render :edit
     end
   end
@@ -56,13 +57,13 @@ class Dashboard::DiscountsController < ApplicationController #Dashboard::BaseCon
 
   def handle_admin_or_merchant_user
     if current_admin?
-      merchant_id = params[:merchant_id] || params[:id]
+      merchant_id = params[:merchant_id] || params[:id] || params[:user_id]
       @merchant = User.find(merchant_id)
-      @form_path = [:admin, @merchant, @item]
+      @form_path = Proc.new { [:admin, @merchant, @discount] }
       @index_path = admin_merchant_discounts_path(@merchant)
     else
       @merchant = current_user
-      @form_path = [:dashboard, @item]
+      @form_path = Proc.new{ [:dashboard, @discount] }
       @index_path = dashboard_discounts_path
     end
   end

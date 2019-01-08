@@ -14,7 +14,7 @@ class DiscountValidator < ActiveModel::Validator
   end
 
   def dollar_off_less_than_min_amount(record)
-    if record.min_amount && record.value_off && record.value_off > record.min_amount && record.discount_type == "dollar"
+    if record.min_amount && record.value_off && record.value_off >= record.min_amount && record.discount_type == "dollar"
       record.errors.add(:min_amount, "Dollars off must be less than the minimum amount")
     end
   end
