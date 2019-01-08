@@ -16,4 +16,10 @@ class Discount < ApplicationRecord
   belongs_to :user
   enum discount_type: ["percent", "dollar"]
 
+  def unusable?
+    user.discounts.where("value_off > ?", value_off).any? do |dc|
+      dc.min_amount < min_amount
+    end
+  end
+
 end

@@ -1,4 +1,4 @@
-class Dashboard::DiscountsController < ApplicationController
+class Dashboard::DiscountsController < ApplicationController #Dashboard::BaseController
   before_action :handle_admin_or_merchant_user, except: [:index]
 
   before_action :set_discount_type_for_edit, only: [:edit, :update]
@@ -82,7 +82,7 @@ class Dashboard::DiscountsController < ApplicationController
     end
   end
 
-  def set_discount_type_for_edit    
+  def set_discount_type_for_edit
     if @merchant.discounts.count > 1
       @discount_type = @merchant.discounts.first.discount_type
     end

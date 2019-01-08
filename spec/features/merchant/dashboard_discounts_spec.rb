@@ -199,10 +199,21 @@ RSpec.describe 'Merchant discount Page' do
 
           click_on @submit
           #
-          # expect(page).to have_content("Because only the discount with the highest value off can apply to an order, this discount would be unusable: '$5 off orders of $40 or more.'")
         end
       end
+      it "When a discount would never be used, a warning appears" do
+        discount_1 = create(:discount, user: @merchant, min_amount: 100, value_off: 4, discount_type: "dollar")
+        discount_2 = create(:discount, user: @merchant, min_amount: 10, value_off: 5, discount_type: "dollar")
+        sign_in.call
+        visit index_path
+        within "#discount-#{discount_1.id}" do
+          expect(page).to have_content("WARNING: Because only the discount with the highest value off can apply to an order, this discount will never be used.")
+        end
+        within "#discount-#{discount_2.id}" do
+          expect(page).to_not have_content("WARNING: Because only the discount with the highest value off can apply to an order, this discount will never be used.")
+        end
 
+      end
       describe "when a discount isn't the first, there is no choice for discount type" do
         before(:each) do
           create(:discount, user: @merchant, discount_type: "percent")

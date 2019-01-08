@@ -5,6 +5,9 @@
   <% elsif discount.dollar? %>
     <p> $<%= discount.value_off %> off orders of $<%= discount.min_amount %> or more. </p>
   <% end %>
+  <% if discount.unusable? %>
+    <p class="warning"> WARNING: Because only the discount with the highest value off can apply to an order, this discount will never be used. </p>
+  <% end %>
   <%= link_to "Edit", @edit_path.call(discount) %>
   <%= button_to "Delete", @delete_path.call(discount), method: :delete, data: {confirm: "Are you sure?"} %>
   </div>

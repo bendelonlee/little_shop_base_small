@@ -34,4 +34,17 @@ describe Discount do
 
   end
 
+  describe 'instance methods' do
+    it '.unusable?' do
+      merchant = create(:merchant)
+      discount_1 = create(:discount, min_amount: 10, user: merchant, value_off: 10)
+      discount_2 = create(:discount, min_amount: 12, user: merchant, value_off: 5)
+      discount_3 = create(:discount, min_amount: 12, value_off: 5)
+      expect(discount_1.unusable?).to eq(false)
+      expect(discount_2.unusable?).to eq(true)
+      expect(discount_3.unusable?).to eq(false)
+    end
+
+  end
+
 end
