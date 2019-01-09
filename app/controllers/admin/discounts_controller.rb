@@ -10,6 +10,14 @@ class Admin::DiscountsController < ApplicationController
   end
 
   def show
+    @merchant = User.find(params[:merchant_id])
+    @discount = Discount.find(params[:id])
+    @oiq = OrderItem.quantity_distribution
+    @your_oiq = @merchant.oi_quantity_distribution
+    @qbd = @merchant.oi_quant_d_before_discount(@discount)
+    @qad = @merchant.oi_quant_d_after_discount(@discount)
+    @discount_path = Proc.new { |discount| admin_merchant_discount_path(@merchant, discount) }
+    @edit_path = Proc.new { |discount| edit_admin_merchant_discount_path(@merchant, discount) }
     render "/dashboard/discounts/show"
   end
 

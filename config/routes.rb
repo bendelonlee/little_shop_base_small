@@ -40,7 +40,7 @@ Rails.application.routes.draw do
   post '/admin/users/:merchant_id/discounts', to: 'dashboard/discounts#create', as: 'admin_user_discounts'
   patch '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#update', as: 'admin_user_discount'
   delete '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#destroy', as: 'admin_merchant_discount'
-  get '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#show'
+  get '/admin/users/:merchant_id/discounts/:id', to: 'admin/discounts#show'
   namespace :admin do
     resources :users, only: [:index, :show, :edit] do
       patch '/enable', to: 'users#enable', as: 'enable'

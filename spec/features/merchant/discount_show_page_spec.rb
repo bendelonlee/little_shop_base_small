@@ -38,12 +38,12 @@ describe 'discount show page' do
           expect(page).to have_css("#discount-chart")
         end
       end
+
       it 'has discount info' do
         sign_in.call
         visit discount_path
         expect(page).to have_content("Created at: #{@discount.created_at}")
       end
-
     end
   end
 end

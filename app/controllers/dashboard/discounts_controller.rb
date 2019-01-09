@@ -34,7 +34,7 @@ class Dashboard::DiscountsController < ApplicationController #Dashboard::BaseCon
   def show
     @discount = Discount.find(params[:id])
     @oiq = OrderItem.quantity_distribution
-    @yoiq = @merchant.oi_quantity_distribution
+    @your_oiq = @merchant.oi_quantity_distribution
     @qbd = @merchant.oi_quant_d_before_discount(@discount)
     @qad = @merchant.oi_quant_d_after_discount(@discount)
     @discount_path = Proc.new { |discount| dashboard_discount_path(discount) }
