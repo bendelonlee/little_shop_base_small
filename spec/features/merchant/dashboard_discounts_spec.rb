@@ -205,15 +205,39 @@ RSpec.describe 'Merchant discount Page' do
               fill_in :discount_min_amount, with: "2"
               find("input[value='dollar']", visible: false).click if @am_adding
 
-
               click_on @submit
 
               expect(page).to have_content("Dollars off must be less than the minimum amount")
               expect(Discount.count).to eq(0) if @am_adding
               expect(Discount.count).to eq(1) unless @am_adding
             end
-            scenario 'a discount can be saved after errors reported/rerender ' do
+            scenario 'a value off and min amount must be uniqe to the merchant and a discount can be saved after errors reported/rerender' do
+              same_value_off = 11
+              same_min_amount = 21
+              new_value_off = 70
+              new_min_amount = 400
 
+              create(:discount, value_off: same_value_off, min_amount: same_min_amount, user: @merchant)
+              sign_in.call
+              visit index_path
+              @click_form_link.call
+              fill_in :discount_value_off, with: same_value_off
+              fill_in :discount_min_amount, with: same_min_amount
+
+              click_on @submit
+
+              expect(page).to have_content("You already have a discount with that minimum amount")
+              expect(page).to have_content("You already have a discount with that value off")
+
+              fill_in :discount_value_off, with: new_value_off
+              fill_in :discount_min_amount, with: new_min_amount
+
+              click_on @submit
+              sign_in.call
+              visit index_path
+              within "#discount-#{ Discount.find_by(updated_at: Discount.maximum(:updated_at)).id }" do
+                expect(page).to have_content("#{new_value_off}% off orders of #{new_min_amount} items or more.")
+              end
             end
 
           end
