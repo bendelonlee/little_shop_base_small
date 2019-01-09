@@ -35,6 +35,24 @@ RSpec.describe OrderItem, type: :model do
       expect(actual[-4].revenue).to eq(8_000)
       expect(actual.first.revenue).to eq(600)
     end
+    it '.oi_quantity_distribution' do
+      @merchant = create(:merchant)
+      @item = create(:item, user: @merchant)
+      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 3)
+      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 2)
+      @oi_2 = create(:fulfilled_order_item, item: @item, quantity: 1)
+      @oi_3 = create(:fulfilled_order_item, item: @item, quantity: 75)
+
+      @oi_4 = create(:fulfilled_order_item, quantity: 100)
+      actual = OrderItem.quantity_distribution[0]
+
+      expect(actual.lowest).to eq(1)
+      expect(actual.low_q).to eq(2)
+      expect(actual.median).to eq(3)
+      expect(actual.high_q).to eq(75)
+
+      expect(actual.highest).to eq(100)
+    end
   end
 
   describe 'instance methods' do
@@ -106,7 +124,7 @@ RSpec.describe OrderItem, type: :model do
 
           lower_discount = create(:discount, user: merchant, min_amount: 10, discount_type: 'dollar', value_off: 2)
           higher_discount = create(:discount, user: merchant, min_amount: 20, discount_type: 'dollar', value_off: 3)
-          other_discount = create(:discount, min_amount: 5, discount_type: 'dollar', value_off: 20)
+          other_discount = create(:discount, min_amount: 21, discount_type: 'dollar', value_off: 20)
           expect(oi.applicable_discount).to eq(higher_discount)
         end
       end
@@ -118,7 +136,7 @@ RSpec.describe OrderItem, type: :model do
 
         lower_discount = create(:discount, user: merchant, min_amount: 10, discount_type: 'dollar', value_off: 2)
         higher_discount = create(:discount, user: merchant, min_amount: 20, discount_type: 'dollar', value_off: 3)
-        other_discount = create(:discount, min_amount: 5, discount_type: 'dollar', value_off: 20)
+        other_discount = create(:discount, min_amount: 54, discount_type: 'dollar', value_off: 20)
 
         oi = create(:order_item, quantity: 7, price: 3, item: item)
 

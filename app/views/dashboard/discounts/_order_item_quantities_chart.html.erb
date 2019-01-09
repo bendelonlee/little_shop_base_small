@@ -1,0 +1,26 @@
+<script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+
+      ['Quantity Sitewide', <%= @oiq[0].lowest  %>, <%= @oiq[0].low_q %>, <%= @oiq[0].high_q  %>, <%= @oiq[0].highest  %> ],
+      ['Your Average Quantity', <%= @your_oiq[0].lowest  %>, <%= @your_oiq[0].low_q %>, <%= @your_oiq[0].high_q  %>, <%= @your_oiq[0].highest  %> ],
+      ['Quantity Before Discount', <%= @qbd[0].lowest  %>, <%= @qbd[0].low_q %>, <%= @qbd[0].high_q  %>, <%= @qbd[0].highest  %> ],
+      ['Quantity After Discount', <%= @qad[0].lowest  %>, <%= @qad[0].low_q %>, <%= @qad[0].high_q  %>, <%= @qad[0].highest || 0  %> ]
+      // Treat first row as data as well.
+    ], true);
+
+    var options = {
+      legend:'none',
+      height: 500,
+      title: "Discount's Effect on Order Item Quantity"
+    };
+
+    var chart = new google.visualization.CandlestickChart(document.getElementById('discount-chart'));
+
+    chart.draw(data, options);
+  }
+    </script>
+<div id="discount-chart"></div>

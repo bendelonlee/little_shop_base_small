@@ -1,4 +1,4 @@
-<%= form_for @form_path do |f| %>
+<%= form_for @form_path.call do |f| %>
   <%= render partial: "errors/error_explanation", locals: {unsaved_resource: @discount} %>
   <%= f.label :value_off %>
   <%= f.number_field :value_off %></br>

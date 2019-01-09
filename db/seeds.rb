@@ -23,10 +23,6 @@ item_3 = create(:item, user: merchant_3)
 item_4 = create(:item, user: merchant_4)
 
 
-discount_1 = create(:discount, user: merchant_1)
-discount_2 = create(:discount, user: merchant_2, discount_type: "dollar")
-discount_3 = create(:discount, user: merchant_3, discount_type: "dollar")
-discount_4 = create(:discount, user: merchant_4)
 
 create_list(:item, 10, user: merchant_1)
 
@@ -42,8 +38,8 @@ amounts = amounts.cycle
 
 Item.all.each do |item|
   amounts.next.times do
-    ordered_at = rand(24).months.ago + rand(30).days + rand(86400).seconds
-    fulfilled_at = ordered_at + amounts.next.days + rand(86400).seconds
+    ordered_at = rand(24).months.ago + rand(10..40).days + rand(86400).seconds
+    fulfilled_at = ordered_at + rand(10).days + rand(86400).seconds
     amounts.next.times do
       order = create(:completed_order, user: user)
       amounts.next.times do
@@ -60,3 +56,26 @@ create(:fulfilled_order_item, order: order, item: item_2, price: 2, quantity: 1,
 order = create(:cancelled_order, user: user)
 create(:order_item, order: order, item: item_2, price: 2, quantity: 1, created_at: rng.rand(23).hour.ago, updated_at: rng.rand(59).minutes.ago)
 create(:order_item, order: order, item: item_3, price: 3, quantity: 1, created_at: rng.rand(23).hour.ago, updated_at: rng.rand(59).minutes.ago)
+
+
+User.where(role: :merchant).all.each do |merchant|
+  created_at = rand(10..20).days.ago + rand(86400).seconds
+  dis_amount = [5,10,25].sample
+  d_type = ["percent", "dollar"].sample
+  case d_type
+  when "dollar"
+    value_off = dis_amount / 5
+  when "percent"
+    value_off = dis_amount
+  end
+  discount = create( :discount, user: merchant, min_amount: dis_amount, value_off: value_off, created_at: created_at, discount_type: d_type)
+  7.times do
+    item = merchant.items.sample
+
+    ordered_at = created_at + rand(86400)
+    fulfilled_at = ordered_at + rand(8640).seconds
+    create(:fulfilled_order_item, order: order, item: item, price: item.price, quantity: discount.min_amount, created_at: ordered_at, updated_at: fulfilled_at)
+  end
+end
+
+# OrderItem.where("updated_at > ?", Time.now).destroy_all

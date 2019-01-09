@@ -24,7 +24,7 @@ Rails.application.routes.draw do
       patch '/items/:id/fulfill', to: 'orders#fulfill_item', as: 'item_fulfill'
     end
     resources :items, except: [:show]
-    resources :discounts, except: [:show]
+    resources :discounts
     patch '/items/:id/enable', to: 'items#enable', as: 'enable_item'
     patch '/items/:id/disable', to: 'items#disable', as: 'disable_item'
   end
@@ -35,11 +35,14 @@ Rails.application.routes.draw do
     resources :orders, only: [:index, :create, :show, :destroy]
   end
 
-  post '/admin/users/:merchant_id/items', to: 'dashboard/items#create', as: 'admin_user_items'
-  patch '/admin/users/:merchant_id/items/:id', to: 'dashboard/items#update', as: 'admin_user_item'
-  post '/admin/users/:merchant_id/discounts', to: 'dashboard/discounts#create', as: 'admin_user_discounts'
-  patch '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#update', as: 'admin_user_discount'
-  delete '/admin/users/:merchant_id/discounts/:id', to: 'dashboard/discounts#destroy', as: 'admin_merchant_discount'
+  scope :admin, module: :dashboard do
+    post 'users/:merchant_id/items', to: 'items#create', as: 'admin_user_items'
+    patch 'users/:merchant_id/items/:id', to: 'items#update', as: 'admin_user_item'
+    post 'users/:merchant_id/discounts', to: 'discounts#create', as: 'admin_user_discounts'
+    patch 'users/:merchant_id/discounts/:id', to: 'discounts#update', as: 'admin_user_discount'
+    delete 'users/:merchant_id/discounts/:id', to: 'discounts#destroy', as: 'admin_merchant_discount'
+  end
+  get '/admin/users/:merchant_id/discounts/:id', to: 'admin/discounts#show'
   namespace :admin do
     resources :users, only: [:index, :show, :edit] do
       patch '/enable', to: 'users#enable', as: 'enable'
@@ -52,7 +55,7 @@ Rails.application.routes.draw do
       patch '/disable', to: 'merchants#disable', as: 'disable'
       patch '/upgrade', to: 'merchants#downgrade', as: 'downgrade'
       resources :items, only: [:index, :new, :edit]
-      resources :discounts, only: [:index, :new, :edit]
+      resources :discounts, only: [:show, :index, :new, :edit]
     end
     resources :dashboard, only: [:index]
   end

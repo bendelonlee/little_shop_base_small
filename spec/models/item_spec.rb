@@ -44,6 +44,29 @@ RSpec.describe Item, type: :model do
         expect(Item.unpopular_items(3)).to eq([@items[4], @items[5], @items[2]])
       end
     end
+    describe 'price_candlestick_data' do
+      scenario 'when one item' do
+        item1 = create(:item, price: 100)
+        actual = Item.price_candlestick_data
+        expect(actual.lowest).to eq(100)
+
+        expect(actual.high_q).to eq(100)
+        expect(actual.low_q).to eq(100)
+        expect(actual.highest).to eq(100)
+        expect(actual.median).to eq(100)
+      end
+      scenario 'when two items' do
+        item1 = create(:item, price: 10)
+        item1 = create(:item, price: 20)
+        actual = Item.price_candlestick_data
+        expect(actual.lowest).to eq(10)
+
+        expect(actual.high_q).to eq(17.5)
+        expect(actual.low_q).to eq(12.5)
+        expect(actual.highest).to eq(20)
+        expect(actual.median).to eq(15)
+      end
+    end
   end
 
   describe 'instance methods' do
