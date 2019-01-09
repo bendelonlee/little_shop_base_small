@@ -61,9 +61,17 @@ create(:order_item, order: order, item: item_3, price: 3, quantity: 1, created_a
 User.where(role: :merchant).all.each do |merchant|
   created_at = rand(10..20).days.ago + rand(86400).seconds
   dis_amount = [5,10,25].sample
-  discount = create( :discount, user: merchant, min_amount: dis_amount, value_off: dis_amount, created_at: created_at, discount_type: [0,1].sample )
+  d_type = ["percent", "dollar"].sample
+  case d_type
+  when "dollar"
+    value_off = dis_amount / 5
+  when "percent"
+    value_off = dis_amount
+  end
+  discount = create( :discount, user: merchant, min_amount: dis_amount, value_off: value_off, created_at: created_at, discount_type: d_type)
   7.times do
     item = merchant.items.sample
+
     ordered_at = created_at + rand(86400)
     fulfilled_at = ordered_at + rand(8640).seconds
     create(:fulfilled_order_item, order: order, item: item, price: item.price, quantity: discount.min_amount, created_at: ordered_at, updated_at: fulfilled_at)
